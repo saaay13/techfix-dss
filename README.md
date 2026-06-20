@@ -318,4 +318,4 @@ Como administrador quiero ver un dashboard con KPIs para tomar decisiones basada
 ## Enlaces
 
 - **Repositorio:** [https://github.com/saaay13/techfix-dss](https://github.com/saaay13/techfix-dss)
-- **GitHub Projects:** [https://github.com/saaay13/techfix-dss/projects/1](https://github.com/saaay13/techfix-dss/projects/1)
+- **GitHub Projects:** [https://github.com/users/saaay13/projects/11](https://github.com/saaay13/techfix-dss/projects/1)
