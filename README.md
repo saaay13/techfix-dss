@@ -1,15 +1,6 @@
 # TECHFIX DSS
 ## Sistema Inteligente de Gestión y Análisis para Servicios Técnicos
 
-**Squad**
-- Integrante 1:
-- Integrante 2:
-- Integrante 3:
-- Integrante 4:
-- Integrante 5:
-- GitHub: [https://github.com/saaay13/techfix-dss](https://github.com/saaay13/techfix-dss)
-
----
 
 ## 1. Contexto Estratégico
 
