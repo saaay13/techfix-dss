@@ -5,4 +5,9 @@
 !README.md
 !modelo/
 !modelo/**
+!backend-techfix/
+!backend-techfix/**
+!frontend-techfix/
+!frontend-techfix/**
 !.gitignore
+!contexto.md
