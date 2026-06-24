@@ -3,6 +3,7 @@
 
 # Excepciones
 !README.md
+!INFORMACION.md
 !modelo/
 !modelo/**
 !backend-techfix/
@@ -11,3 +12,4 @@
 !frontend-techfix/**
 !.gitignore
 !contexto.md
+
