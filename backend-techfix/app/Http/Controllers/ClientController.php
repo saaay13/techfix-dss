@@ -12,7 +12,7 @@ class ClientController extends Controller
      */
     public function index()
     {
-        //
+        return response()->json(Client::where('activo', true)->orderBy('nombre')->get());
     }
 
     /**

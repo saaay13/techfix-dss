@@ -10,9 +10,15 @@ class DeviceController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $query = Device::with('client')->where('activo', true);
+
+        if ($request->filled('client_id')) {
+            $query->where('client_id', $request->client_id);
+        }
+
+        return response()->json($query->orderBy('created_at', 'desc')->get());
     }
 
     /**
