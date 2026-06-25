@@ -1,16 +1,7 @@
-import { useEffect, useState } from 'react'
-import { ping } from './services/api'
+import ClientForm from './components/Clients/ClientForm'
 
 function App() {
-  const [status, setStatus] = useState('Verificando conexión...')
-
-  useEffect(() => {
-    ping()
-      .then(data => setStatus(JSON.stringify(data, null, 2)))
-      .catch(() => setStatus('Error de conexión con el backend'))
-  }, [])
-
-  return <pre>{status}</pre>
+  return <ClientForm />
 }
 
 export default App
