@@ -25,3 +25,19 @@ export const createClient = (data: {
     if (!res.ok) throw json
     return json
   })
+
+export const createComponent = (data: {
+  nombre: string
+  descripcion?: string
+  cantidad: number
+  precio_unitario: number
+}) =>
+  fetch(`${API}/components`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  }).then(async res => {
+    const json = await res.json()
+    if (!res.ok) throw json
+    return json
+  })

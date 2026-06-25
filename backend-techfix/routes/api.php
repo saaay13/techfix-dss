@@ -15,3 +15,4 @@ Route::get('/ping', function () {
 Route::apiResource('users', UserController::class);
 Route::apiResource('roles', RoleController::class);
 Route::apiResource('clients', ClientController::class);
+Route::apiResource('components', ComponentController::class);

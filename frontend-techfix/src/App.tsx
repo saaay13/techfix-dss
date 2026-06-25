@@ -1,7 +1,7 @@
-import ClientForm from './components/Clients/ClientForm'
+import ComponentForm from './components/Components/ComponentForm'
 
 function App() {
-  return <ClientForm />
+  return <ComponentForm />
 }
 
 export default App

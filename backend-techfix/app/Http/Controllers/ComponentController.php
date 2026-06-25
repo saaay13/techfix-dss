@@ -7,59 +7,28 @@ use Illuminate\Http\Request;
 
 class ComponentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $components = Component::where('activo', true)
+            ->orderBy('id', 'desc')
+            ->paginate(10);
+
+        return response()->json($components);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
-    }
+        $validated = $request->validate([
+            'nombre'         => 'required|string|max:255',
+            'descripcion'    => 'nullable|string',
+            'cantidad'       => 'required|integer|min:1',
+            'stock_minimo'   => 'nullable|integer|min:0',
+            'precio_unitario'=> 'required|numeric|min:0',
+            'category_id'    => 'nullable|exists:categories,id',
+        ]);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Component $component)
-    {
-        //
-    }
+        $component = Component::create($validated);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Component $component)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Component $component)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Component $component)
-    {
-        //
+        return response()->json($component, 201);
     }
 }
