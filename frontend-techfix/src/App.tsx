@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import LoginPage from './pages/LoginPage';
+import UserListPage from './pages/UserListPage';
+import UserFormPage from './pages/UserFormPage';
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -50,6 +52,9 @@ export default function App() {
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/" element={<PrivateRoute><HomePage /></PrivateRoute>} />
+          <Route path="/usuarios" element={<PrivateRoute><UserListPage /></PrivateRoute>} />
+          <Route path="/usuarios/nuevo" element={<PrivateRoute><UserFormPage /></PrivateRoute>} />
+          <Route path="/usuarios/:id/editar" element={<PrivateRoute><UserFormPage /></PrivateRoute>} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </AuthProvider>
