@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('metodo_pago', 50);
             $table->date('fecha');
             $table->foreignId('service_order_id')->constrained();
+            $table->index('service_order_id');
             $table->timestamps();
         });
     }

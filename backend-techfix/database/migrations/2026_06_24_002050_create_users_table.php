@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('apellido');
             $table->string('telefono', 20)->nullable();
             $table->foreignId('role_id')->constrained();
+            $table->index('role_id');
             $table->boolean('activo')->default(true);
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');

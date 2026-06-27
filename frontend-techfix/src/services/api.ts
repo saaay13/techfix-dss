@@ -1,4 +1,4 @@
-const BASE = 'http://localhost:8000/api'
+const BASE = 'http://127.0.0.1:8000/api'
 
 async function request(method: string, path: string, data?: unknown) {
   const token = localStorage.getItem('token')

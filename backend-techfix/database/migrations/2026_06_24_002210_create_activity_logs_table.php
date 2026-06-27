@@ -17,6 +17,9 @@ return new class extends Migration
             $table->foreignId('service_order_id')->constrained();
             $table->foreignId('activity_id')->constrained();
             $table->foreignId('user_id')->constrained();
+            $table->index('service_order_id');
+            $table->index('activity_id');
+            $table->index('user_id');
             $table->timestamps();
         });
     }

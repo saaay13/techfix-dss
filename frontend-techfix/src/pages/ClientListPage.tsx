@@ -15,8 +15,7 @@ interface Client {
 const emptyForm = { nombre: '', apellido: '', telefono: '', correo: '', ci: '', activo: true }
 
 export default function ClientListPage() {
-  const [clients, setClients] = useState<Client[]>([])
-  const [loading, setLoading] = useState(true)
+  const [clients, setClients] = useState<Client[] | null>(null)
   const [error, setError] = useState('')
   const [search, setSearch] = useState('')
   const [modal, setModal] = useState(false)
@@ -26,14 +25,11 @@ export default function ClientListPage() {
   const [saving, setSaving] = useState(false)
 
   const fetchClients = async (s = '') => {
-    setLoading(true)
     try {
       const data = await getClients(s)
       setClients(data.data || [])
     } catch {
       setError('Error al cargar clientes')
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -129,9 +125,7 @@ export default function ClientListPage() {
         className="w-full px-3 py-2 border border-input rounded-lg text-sm bg-background text-foreground mb-4 focus:outline-none focus:ring-2 focus:ring-primary/50"
       />
 
-      {loading ? (
-        <p className="text-muted-foreground">Cargando...</p>
-      ) : clients.length === 0 ? (
+      {clients === null ? null : clients.length === 0 ? (
         <p className="text-muted-foreground">No hay clientes registrados</p>
       ) : (
         <div className="bg-card border border-border rounded-xl shadow-sm overflow-hidden">

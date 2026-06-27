@@ -21,9 +21,8 @@ interface Role {
 const emptyForm = { name: '', apellido: '', email: '', password: '', telefono: '', role_id: '', activo: true }
 
 export default function UserListPage() {
-  const [users, setUsers] = useState<User[]>([])
+  const [users, setUsers] = useState<User[] | null>(null)
   const [roles, setRoles] = useState<Role[]>([])
-  const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [modal, setModal] = useState(false)
   const [editingId, setEditingId] = useState<number | null>(null)
@@ -32,14 +31,11 @@ export default function UserListPage() {
   const [saving, setSaving] = useState(false)
 
   const fetchUsers = async () => {
-    setLoading(true)
     try {
       const data = await getUsers()
       setUsers(data)
     } catch {
       setError('Error al cargar usuarios')
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -138,9 +134,7 @@ export default function UserListPage() {
         <div className="mb-4 p-3 bg-error/10 border border-error/30 text-error rounded-lg text-sm">{error}</div>
       )}
 
-      {loading ? (
-        <p className="text-muted-foreground">Cargando...</p>
-      ) : users.length === 0 ? (
+      {users === null ? null : users.length === 0 ? (
         <p className="text-muted-foreground">No hay usuarios registrados</p>
       ) : (
         <div className="bg-card border border-border rounded-xl shadow-sm overflow-hidden">
