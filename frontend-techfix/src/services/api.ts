@@ -1,54 +1,33 @@
-import axios from 'axios';
+const API = 'http://localhost:8000/api'
 
-const api = axios.create({
-  baseURL: '/api',
-  headers: { 'Content-Type': 'application/json' },
-});
+export const ping = () =>
+  fetch(`${API}/ping`).then(res => res.json())
 
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
+export const getUsers = () =>
+  fetch(`${API}/users`).then(res => res.json())
 
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/login';
-    }
-    return Promise.reject(error);
-  }
-);
+export const getRoles = () =>
+  fetch(`${API}/roles`).then(res => res.json())
 
-export const ping = () => api.get('/ping').then(r => r.data);
+export const getClients = (search = '') =>
+  fetch(`${API}/clients?search=${search}`).then(res => res.json())
 
-export const getUsers = () => api.get('/users').then(r => r.data);
+export const getClient = (id: number) =>
+  fetch(`${API}/clients/${id}`).then(res => res.json())
 
-export const getUser = (id: number) => api.get(`/users/${id}`).then(r => r.data);
+export const createClient = (data: Record<string, string>) =>
+  fetch(`${API}/clients`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  }).then(res => res.ok ? res.json() : res.json().then(e => Promise.reject(e)))
 
-export const createUser = (data: Record<string, unknown>) =>
-  api.post('/users', data).then(r => r.data);
+export const updateClient = (id: number, data: Record<string, string>) =>
+  fetch(`${API}/clients/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  }).then(res => res.ok ? res.json() : res.json().then(e => Promise.reject(e)))
 
-export const updateUser = (id: number, data: Record<string, unknown>) =>
-  api.put(`/users/${id}`, data).then(r => r.data);
-
-export const deleteUser = (id: number) =>
-  api.delete(`/users/${id}`).then(r => r.data);
-
-export const getRoles = () => api.get('/roles').then(r => r.data);
-
-export const createClient = (data: {
-  nombre: string
-  apellido: string
-  telefono: string
-  correo: string
-  ci: string
-}) =>
-  api.post('/clients', data).then(r => r.data);
-
-export default api;
+export const deleteClient = (id: number) =>
+  fetch(`${API}/clients/${id}`, { method: 'DELETE' }).then(res => res.json())
