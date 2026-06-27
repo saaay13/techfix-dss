@@ -1,33 +1,41 @@
-const API = 'http://localhost:8000/api'
+const BASE = 'http://localhost:8000/api'
 
-export const ping = () =>
-  fetch(`${API}/ping`).then(res => res.json())
+async function request(method: string, path: string, data?: unknown) {
+  const token = localStorage.getItem('token')
+  const headers: Record<string, string> = { 'Accept': 'application/json' }
+  if (token) headers['Authorization'] = `Bearer ${token}`
+  if (data) headers['Content-Type'] = 'application/json'
+  const res = await fetch(`${BASE}${path}`, {
+    method,
+    headers,
+    body: data ? JSON.stringify(data) : undefined,
+  })
+  const json = await res.json()
+  if (!res.ok) throw json
+  return { data: json }
+}
 
-export const getUsers = () =>
-  fetch(`${API}/users`).then(res => res.json())
+const api = {
+  get: (path: string) => request('GET', path),
+  post: (path: string, data?: unknown) => request('POST', path, data),
+  put: (path: string, data?: unknown) => request('PUT', path, data),
+  delete: (path: string) => request('DELETE', path),
+}
 
-export const getRoles = () =>
-  fetch(`${API}/roles`).then(res => res.json())
+export default api
 
-export const getClients = (search = '') =>
-  fetch(`${API}/clients?search=${search}`).then(res => res.json())
+export const ping = () => api.get('/ping').then(r => r.data)
 
-export const getClient = (id: number) =>
-  fetch(`${API}/clients/${id}`).then(res => res.json())
+export const getUsers = () => api.get('/users').then(r => r.data)
+export const getUser = (id: number) => api.get(`/users/${id}`).then(r => r.data)
+export const createUser = (data: Record<string, unknown>) => api.post('/users', data).then(r => r.data)
+export const updateUser = (id: number, data: Record<string, unknown>) => api.put(`/users/${id}`, data).then(r => r.data)
+export const deleteUser = (id: number) => api.delete(`/users/${id}`).then(r => r.data)
 
-export const createClient = (data: Record<string, string>) =>
-  fetch(`${API}/clients`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-  }).then(res => res.ok ? res.json() : res.json().then(e => Promise.reject(e)))
+export const getRoles = () => api.get('/roles').then(r => r.data)
 
-export const updateClient = (id: number, data: Record<string, string>) =>
-  fetch(`${API}/clients/${id}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-  }).then(res => res.ok ? res.json() : res.json().then(e => Promise.reject(e)))
-
-export const deleteClient = (id: number) =>
-  fetch(`${API}/clients/${id}`, { method: 'DELETE' }).then(res => res.json())
+export const getClients = (search = '') => api.get(`/clients?search=${search}`).then(r => r.data)
+export const getClient = (id: number) => api.get(`/clients/${id}`).then(r => r.data)
+export const createClient = (data: Record<string, string>) => api.post('/clients', data).then(r => r.data)
+export const updateClient = (id: number, data: Record<string, string>) => api.put(`/clients/${id}`, data).then(r => r.data)
+export const deleteClient = (id: number) => api.delete(`/clients/${id}`).then(r => r.data)

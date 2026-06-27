@@ -3,6 +3,8 @@
 namespace Tests\Feature;
 
 use App\Models\Client;
+use App\Models\User;
+use App\Models\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -10,11 +12,20 @@ class ClientControllerTest extends TestCase
 {
     use RefreshDatabase;
 
+    private function authHeaders(): array
+    {
+        $role = Role::factory()->create(['nombre' => 'Administrador']);
+        $user = User::factory()->create(['role_id' => $role->id]);
+        $token = $user->createToken('test')->plainTextToken;
+        return ['Authorization' => 'Bearer ' . $token];
+    }
+
     public function test_can_list_clients(): void
     {
         Client::factory()->count(3)->create();
 
-        $response = $this->getJson('/api/clients');
+        $response = $this->withHeaders($this->authHeaders())
+            ->getJson('/api/clients');
 
         $response->assertStatus(200)
             ->assertJsonStructure(['data', 'current_page', 'per_page', 'total']);
@@ -30,7 +41,8 @@ class ClientControllerTest extends TestCase
             'ci'       => '1234567',
         ];
 
-        $response = $this->postJson('/api/clients', $payload);
+        $response = $this->withHeaders($this->authHeaders())
+            ->postJson('/api/clients', $payload);
 
         $response->assertStatus(201)
             ->assertJsonFragment(['nombre' => 'Juan']);
@@ -38,7 +50,8 @@ class ClientControllerTest extends TestCase
 
     public function test_requires_all_fields(): void
     {
-        $response = $this->postJson('/api/clients', []);
+        $response = $this->withHeaders($this->authHeaders())
+            ->postJson('/api/clients', []);
 
         $response->assertStatus(422)
             ->assertJsonValidationErrors(['nombre', 'apellido', 'telefono', 'correo', 'ci']);
@@ -54,7 +67,8 @@ class ClientControllerTest extends TestCase
             'ci'       => '1234567',
         ];
 
-        $response = $this->postJson('/api/clients', $payload);
+        $response = $this->withHeaders($this->authHeaders())
+            ->postJson('/api/clients', $payload);
 
         $response->assertStatus(422)
             ->assertJsonValidationErrors(['correo']);
@@ -72,7 +86,8 @@ class ClientControllerTest extends TestCase
             'ci'       => '7654321',
         ];
 
-        $response = $this->postJson('/api/clients', $payload);
+        $response = $this->withHeaders($this->authHeaders())
+            ->postJson('/api/clients', $payload);
 
         $response->assertStatus(422)
             ->assertJsonValidationErrors(['correo']);
@@ -82,7 +97,8 @@ class ClientControllerTest extends TestCase
     {
         $client = Client::factory()->create();
 
-        $response = $this->getJson("/api/clients/{$client->id}");
+        $response = $this->withHeaders($this->authHeaders())
+            ->getJson("/api/clients/{$client->id}");
 
         $response->assertStatus(200)
             ->assertJsonFragment(['nombre' => $client->nombre]);
@@ -92,13 +108,14 @@ class ClientControllerTest extends TestCase
     {
         $client = Client::factory()->create();
 
-        $response = $this->putJson("/api/clients/{$client->id}", [
-            'nombre'   => 'Actualizado',
-            'apellido' => $client->apellido,
-            'telefono' => $client->telefono,
-            'correo'   => $client->correo,
-            'ci'       => $client->ci,
-        ]);
+        $response = $this->withHeaders($this->authHeaders())
+            ->putJson("/api/clients/{$client->id}", [
+                'nombre'   => 'Actualizado',
+                'apellido' => $client->apellido,
+                'telefono' => $client->telefono,
+                'correo'   => $client->correo,
+                'ci'       => $client->ci,
+            ]);
 
         $response->assertStatus(200)
             ->assertJsonFragment(['nombre' => 'Actualizado']);
@@ -108,7 +125,8 @@ class ClientControllerTest extends TestCase
     {
         $client = Client::factory()->create();
 
-        $response = $this->deleteJson("/api/clients/{$client->id}");
+        $response = $this->withHeaders($this->authHeaders())
+            ->deleteJson("/api/clients/{$client->id}");
 
         $response->assertStatus(200)
             ->assertJsonFragment(['message' => 'Cliente desactivado correctamente']);
