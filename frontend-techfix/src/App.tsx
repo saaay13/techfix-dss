@@ -1,8 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate, Link, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import LoginPage from './pages/LoginPage';
-import UserListPage from './pages/UserListPage';
-import UserFormPage from './pages/UserFormPage';
+import PlaceholderPage from './pages/PlaceholderPage';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
@@ -18,8 +17,9 @@ function Sidebar() {
 
   const navItems = [
     { label: 'Dashboard', path: '/' },
-    { label: 'Clientes', path: '/clientes' },
-    ...(isAdmin ? [{ label: 'Usuarios', path: '/usuarios' }] : []),
+    { label: 'Usuarios', path: '/usuarios' },
+    { label: 'Reportes', path: '/reportes/financieros' },
+    { label: 'Dashboard Ingresos', path: '/dashboard/ingresos' },
   ];
 
   return (
@@ -96,27 +96,11 @@ export default function App() {
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/" element={<PrivateRoute><Layout><Dashboard /></Layout></PrivateRoute>} />
-          <Route path="/usuarios" element={
-            <PrivateRoute>
-              <ProtectedRoute roles={['Administrador']}>
-                <Layout><UserListPage /></Layout>
-              </ProtectedRoute>
-            </PrivateRoute>
-          } />
-          <Route path="/usuarios/nuevo" element={
-            <PrivateRoute>
-              <ProtectedRoute roles={['Administrador']}>
-                <Layout><UserFormPage /></Layout>
-              </ProtectedRoute>
-            </PrivateRoute>
-          } />
-          <Route path="/usuarios/:id/editar" element={
-            <PrivateRoute>
-              <ProtectedRoute roles={['Administrador']}>
-                <Layout><UserFormPage /></Layout>
-              </ProtectedRoute>
-            </PrivateRoute>
-          } />
+
+          <Route path="/usuarios" element={<PrivateRoute><ProtectedRoute roles={['Administrador']}><Layout><PlaceholderPage title="Usuarios" /></Layout></ProtectedRoute></PrivateRoute>} />
+          <Route path="/reportes/financieros" element={<PrivateRoute><ProtectedRoute roles={['Administrador']}><Layout><PlaceholderPage title="Reportes Financieros" /></Layout></ProtectedRoute></PrivateRoute>} />
+          <Route path="/dashboard/ingresos" element={<PrivateRoute><ProtectedRoute roles={['Administrador']}><Layout><PlaceholderPage title="Dashboard de Ingresos" /></Layout></ProtectedRoute></PrivateRoute>} />
+
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </AuthProvider>

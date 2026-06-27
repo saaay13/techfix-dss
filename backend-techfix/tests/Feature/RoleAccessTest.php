@@ -131,4 +131,44 @@ class RoleAccessTest extends TestCase
 
         $response->assertStatus(403);
     }
+
+    public function test_tecnico_cannot_access_financial_reports(): void
+    {
+        $token = $this->loginAs($this->createTecnico());
+
+        $response = $this->withHeader('Authorization', "Bearer $token")
+            ->getJson('/api/reports/financial');
+
+        $response->assertStatus(403);
+    }
+
+    public function test_tecnico_cannot_access_income_dashboard(): void
+    {
+        $token = $this->loginAs($this->createTecnico());
+
+        $response = $this->withHeader('Authorization', "Bearer $token")
+            ->getJson('/api/dashboard/income');
+
+        $response->assertStatus(403);
+    }
+
+    public function test_admin_can_access_financial_reports(): void
+    {
+        $token = $this->loginAs($this->createAdmin());
+
+        $response = $this->withHeader('Authorization', "Bearer $token")
+            ->getJson('/api/reports/financial');
+
+        $response->assertStatus(200);
+    }
+
+    public function test_admin_can_access_income_dashboard(): void
+    {
+        $token = $this->loginAs($this->createAdmin());
+
+        $response = $this->withHeader('Authorization', "Bearer $token")
+            ->getJson('/api/dashboard/income');
+
+        $response->assertStatus(200);
+    }
 }
