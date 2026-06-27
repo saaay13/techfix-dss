@@ -21,7 +21,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
 
-    Route::apiResource('users', UserController::class);
-    Route::apiResource('roles', RoleController::class);
     Route::apiResource('clients', ClientController::class);
+
+    Route::middleware('role:Administrador')->group(function () {
+        Route::apiResource('users', UserController::class);
+        Route::apiResource('roles', RoleController::class);
+        Route::get('/reports/financial', function () {
+            return response()->json(['message' => 'Reportes financieros']);
+        });
+        Route::get('/dashboard/income', function () {
+            return response()->json(['message' => 'Dashboard de ingresos']);
+        });
+    });
 });
