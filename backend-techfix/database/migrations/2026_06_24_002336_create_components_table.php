@@ -20,6 +20,7 @@ return new class extends Migration
             $table->decimal('precio_unitario', 10, 2);
             $table->boolean('activo')->default(true);
             $table->foreignId('category_id')->constrained();
+            $table->index('category_id');
             $table->timestamps();
         });
     }

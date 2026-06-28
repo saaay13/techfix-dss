@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Client extends Model
 {
@@ -23,5 +23,25 @@ class Client extends Model
         return [
             'activo' => 'boolean',
         ];
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->where('activo', true);
+    }
+
+    public function scopeInactive($query)
+    {
+        return $query->where('activo', false);
+    }
+
+    public function scopeSearch($query, $search)
+    {
+        return $query->where(function ($q) use ($search) {
+            $q->where('nombre', 'like', "%{$search}%")
+              ->orWhere('apellido', 'like', "%{$search}%")
+              ->orWhere('telefono', 'like', "%{$search}%")
+              ->orWhere('correo', 'like', "%{$search}%");
+        });
     }
 }
