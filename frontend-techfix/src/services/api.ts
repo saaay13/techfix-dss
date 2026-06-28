@@ -60,6 +60,7 @@ export const createServiceOrder = (data: Record<string, unknown>) => api.post('/
 export const updateServiceOrder = (id: number, data: Record<string, unknown>) => api.put(`/service-orders/${id}`, data).then(r => r.data)
 export const deleteServiceOrder = (id: number) => api.delete(`/service-orders/${id}`).then(r => r.data)
 
+export const getCategories = () => api.get('/categories').then(r => r.data)
 export const getComponents = () => api.get('/components').then(r => r.data)
 export const getComponent = (id: number) => api.get(`/components/${id}`).then(r => r.data)
 export const createComponent = (data: Record<string, unknown>) => api.post('/components', data).then(r => r.data)

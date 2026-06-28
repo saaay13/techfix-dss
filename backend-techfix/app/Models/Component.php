@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Component extends Model
 {
@@ -24,5 +25,10 @@ class Component extends Model
             'precio_unitario' => 'decimal:2',
             'activo' => 'boolean',
         ];
+    }
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class);
     }
 }

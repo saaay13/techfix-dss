@@ -10,15 +10,13 @@ class ComponentController extends Controller
 {
     public function index()
     {
-        $components = Component::orderBy('created_at', 'desc')->get();
+        $components = Component::with('category')->orderBy('created_at', 'desc')->get();
         return response()->json($components);
     }
 
     public function store(StoreComponentRequest $request)
     {
-        $data = $request->validated();
-        $data['category_id'] = 1;
-        $component = Component::create($data);
+        $component = Component::create($request->validated());
         return response()->json([
             'message' => 'Componente registrado exitosamente.',
             'component' => $component,

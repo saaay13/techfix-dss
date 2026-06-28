@@ -7,6 +7,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\DeviceController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ComponentController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ServiceOrderController;
 use App\Http\Controllers\ServiceTypeController;
 
@@ -29,6 +30,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('devices', DeviceController::class);
     Route::apiResource('service-types', ServiceTypeController::class)->only(['index', 'show']);
     Route::apiResource('service-orders', ServiceOrderController::class);
+    Route::apiResource('categories', CategoryController::class)->only(['index', 'show']);
     Route::apiResource('components', ComponentController::class);
 
     Route::middleware('role:Administrador')->group(function () {
