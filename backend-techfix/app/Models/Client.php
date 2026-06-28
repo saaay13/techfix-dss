@@ -17,25 +17,24 @@ class Client extends Model
         'ci',
         'activo',
     ];
-    
-    protected $hidden = [
-        'activo',
-    ];
-    
-    protected $casts = [
-        'activo' => 'boolean',
-    ];
-    
+
+    protected function casts(): array
+    {
+        return [
+            'activo' => 'boolean',
+        ];
+    }
+
     public function scopeActive($query)
     {
         return $query->where('activo', true);
     }
-    
+
     public function scopeInactive($query)
     {
         return $query->where('activo', false);
     }
-    
+
     public function scopeSearch($query, $search)
     {
         return $query->where(function ($q) use ($search) {
@@ -45,5 +44,4 @@ class Client extends Model
               ->orWhere('correo', 'like', "%{$search}%");
         });
     }
-    
 }

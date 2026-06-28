@@ -39,3 +39,15 @@ export const getClient = (id: number) => api.get(`/clients/${id}`).then(r => r.d
 export const createClient = (data: Record<string, string>) => api.post('/clients', data).then(r => r.data)
 export const updateClient = (id: number, data: Record<string, string>) => api.put(`/clients/${id}`, data).then(r => r.data)
 export const deleteClient = (id: number) => api.delete(`/clients/${id}`).then(r => r.data)
+
+export const getDevices = () => api.get('/devices').then(r => r.data)
+export const getDevice = (id: number) => api.get(`/devices/${id}`).then(r => r.data)
+export const createDevice = (data: Record<string, unknown>) => api.post('/devices', data).then(r => r.data)
+export const updateDevice = (id: number, data: Record<string, unknown>) => api.put(`/devices/${id}`, data).then(r => r.data)
+export const deleteDevice = (id: number) => api.delete(`/devices/${id}`).then(r => r.data)
+
+export const getDeviceTypes = () => [
+  'PC', 'Laptop', 'PlayStation', 'Xbox', 'Nintendo', 'Celular', 'Electrónica general',
+]
+
+export const getPhysicalStates = () => ['Bueno', 'Regular', 'Malo']
