@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { getClients, createClient, updateClient, getClient, deleteClient } from '../services/api'
-import Modal from '../components/Modal'
+import { getClients, createClient, updateClient, getClient, deleteClient } from '../../services/clients'
+import Modal from '../../components/Modal'
 
 interface Client {
   id: number

@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
-import { getServiceOrders, getServiceOrder, getServiceTypes, getClients, getClientDevices, createServiceOrder, updateServiceOrder, deleteServiceOrder } from '../services/api'
-import Modal from '../components/Modal'
+import { getServiceOrders, getServiceOrder, getServiceTypes, createServiceOrder, updateServiceOrder, deleteServiceOrder } from '../../services/orders'
+import { getClients } from '../../services/clients'
+import { getClientDevices } from '../../services/devices'
+import Modal from '../../components/Modal'
 
 interface ServiceOrder {
   id: number

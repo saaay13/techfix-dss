@@ -1,6 +1,7 @@
 import { FormEvent, useEffect, useState } from 'react'
-import { getDevices, getDevice, createDevice, updateDevice, deleteDevice, getClients, getDeviceTypes, getPhysicalStates } from '../services/api'
-import Modal from '../components/Modal'
+import { getDevices, getDevice, createDevice, updateDevice, deleteDevice, getDeviceTypes, getPhysicalStates } from '../../services/devices'
+import { getClients } from '../../services/clients'
+import Modal from '../../components/Modal'
 
 interface Device {
   id: number

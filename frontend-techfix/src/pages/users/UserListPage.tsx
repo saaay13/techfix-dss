@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { getUsers, createUser, updateUser, getUser, deleteUser, getRoles } from '../services/api'
-import Modal from '../components/Modal'
+import { getUsers, createUser, updateUser, getUser, deleteUser, getRoles } from '../../services/users'
+import Modal from '../../components/Modal'
 
 interface User {
   id: number

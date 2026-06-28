@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { getComponents, getComponent, createComponent, updateComponent, deleteComponent, getCategories } from '../services/api'
-import Modal from '../components/Modal'
+import { getComponents, getComponent, createComponent, updateComponent, deleteComponent, getCategories } from '../../services/components'
+import Modal from '../../components/Modal'
 
 interface Component {
   id: number
