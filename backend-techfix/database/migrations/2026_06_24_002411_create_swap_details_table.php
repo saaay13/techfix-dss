@@ -17,6 +17,8 @@ return new class extends Migration
             $table->integer('cantidad');
             $table->foreignId('component_swap_id')->constrained();
             $table->foreignId('component_id')->constrained();
+            $table->index('component_swap_id');
+            $table->index('component_id');
             $table->timestamps();
         });
     }

@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->text('observaciones')->nullable();
             $table->foreignId('service_order_id')->constrained();
+            $table->index('service_order_id');
             $table->timestamps();
         });
     }

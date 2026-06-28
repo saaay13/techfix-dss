@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('correo')->unique();
             $table->string('ci', 20)->unique();
             $table->boolean('activo')->default(true);
+            $table->index('activo');
+            $table->index(['activo', 'nombre']);
             $table->timestamps();
         });
     }

@@ -32,4 +32,31 @@ class ClientController extends Controller
 
         return response()->json($client, 201);
     }
+
+    public function show(Client $client)
+    {
+        return response()->json($client);
+    }
+
+    public function update(Request $request, Client $client)
+    {
+        $validated = $request->validate([
+            'nombre'   => 'required|string|max:255',
+            'apellido' => 'required|string|max:255',
+            'telefono' => 'required|string|max:20',
+            'correo'   => ['required', 'email', 'max:255', Rule::unique('clients', 'correo')->ignore($client->id)],
+            'ci'       => ['required', 'string', 'max:20', Rule::unique('clients', 'ci')->ignore($client->id)],
+        ]);
+
+        $client->update($validated);
+
+        return response()->json($client);
+    }
+
+    public function destroy(Client $client)
+    {
+        $client->update(['activo' => false]);
+
+        return response()->json(['message' => 'Cliente desactivado correctamente']);
+    }
 }

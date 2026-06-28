@@ -3,32 +3,47 @@
 namespace App\Http\Controllers;
 
 use App\Models\Component;
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreComponentRequest;
+use App\Http\Requests\UpdateComponentRequest;
 
 class ComponentController extends Controller
 {
     public function index()
     {
-        $components = Component::where('activo', true)
-            ->orderBy('id', 'desc')
-            ->paginate(10);
-
+        $components = Component::orderBy('created_at', 'desc')->get();
         return response()->json($components);
     }
 
-    public function store(Request $request)
+    public function store(StoreComponentRequest $request)
     {
-        $validated = $request->validate([
-            'nombre'         => 'required|string|max:255',
-            'descripcion'    => 'nullable|string',
-            'cantidad'       => 'required|integer|min:1',
-            'stock_minimo'   => 'nullable|integer|min:0',
-            'precio_unitario'=> 'required|numeric|min:0',
-            'category_id'    => 'nullable|exists:categories,id',
+        $data = $request->validated();
+        $data['category_id'] = 1;
+        $component = Component::create($data);
+        return response()->json([
+            'message' => 'Componente registrado exitosamente.',
+            'component' => $component,
+        ], 201);
+    }
+
+    public function show(Component $component)
+    {
+        return response()->json($component);
+    }
+
+    public function update(UpdateComponentRequest $request, Component $component)
+    {
+        $component->update($request->validated());
+        return response()->json([
+            'message' => 'Componente actualizado exitosamente.',
+            'component' => $component,
         ]);
+    }
 
-        $component = Component::create($validated);
-
-        return response()->json($component, 201);
+    public function destroy(Component $component)
+    {
+        $component->delete();
+        return response()->json([
+            'message' => 'Componente eliminado exitosamente.',
+        ]);
     }
 }
