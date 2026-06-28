@@ -3,7 +3,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import LoginPage from './pages/LoginPage';
 import UserListPage from './pages/UserListPage';
 import ClientListPage from './pages/ClientListPage';
-import DeviceForm from './pages/DeviceForm';
+import DeviceListPage from './pages/DeviceListPage';
 import PlaceholderPage from './pages/PlaceholderPage';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -103,7 +103,7 @@ export default function App() {
           <Route path="/" element={<PrivateRoute><Layout><Dashboard /></Layout></PrivateRoute>} />
 
           <Route path="/clientes" element={<PrivateRoute><Layout><ClientListPage /></Layout></PrivateRoute>} />
-          <Route path="/equipos" element={<PrivateRoute><Layout><DeviceForm /></Layout></PrivateRoute>} />
+          <Route path="/equipos" element={<PrivateRoute><Layout><DeviceListPage /></Layout></PrivateRoute>} />
           <Route path="/usuarios" element={<PrivateRoute><ProtectedRoute roles={['Administrador']}><Layout><UserListPage /></Layout></ProtectedRoute></PrivateRoute>} />
           <Route path="/reportes/financieros" element={<PrivateRoute><ProtectedRoute roles={['Administrador']}><Layout><PlaceholderPage title="Reportes Financieros" /></Layout></ProtectedRoute></PrivateRoute>} />
           <Route path="/dashboard/ingresos" element={<PrivateRoute><ProtectedRoute roles={['Administrador']}><Layout><PlaceholderPage title="Dashboard de Ingresos" /></Layout></ProtectedRoute></PrivateRoute>} />
