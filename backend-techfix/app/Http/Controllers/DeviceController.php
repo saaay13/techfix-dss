@@ -11,8 +11,11 @@ class DeviceController extends Controller
 {
     public function index()
     {
-        $devices = Device::with('client')->orderBy('created_at', 'desc')->get();
-        return response()->json($devices);
+        $query = Device::with('client')->orderBy('created_at', 'desc');
+        if (request()->has('client_id')) {
+            $query->where('client_id', request('client_id'));
+        }
+        return response()->json($query->get());
     }
 
     public function store(StoreDeviceRequest $request)

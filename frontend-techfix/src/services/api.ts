@@ -40,7 +40,8 @@ export const createClient = (data: Record<string, string>) => api.post('/clients
 export const updateClient = (id: number, data: Record<string, string>) => api.put(`/clients/${id}`, data).then(r => r.data)
 export const deleteClient = (id: number) => api.delete(`/clients/${id}`).then(r => r.data)
 
-export const getDevices = () => api.get('/devices').then(r => r.data)
+export const getDevices = (clientId?: number) => api.get(`/devices${clientId ? `?client_id=${clientId}` : ''}`).then(r => r.data)
+export const getClientDevices = (clientId: number) => api.get(`/devices?client_id=${clientId}`).then(r => r.data)
 export const getDevice = (id: number) => api.get(`/devices/${id}`).then(r => r.data)
 export const createDevice = (data: Record<string, unknown>) => api.post('/devices', data).then(r => r.data)
 export const updateDevice = (id: number, data: Record<string, unknown>) => api.put(`/devices/${id}`, data).then(r => r.data)

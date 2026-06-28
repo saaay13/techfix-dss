@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { getServiceOrders, getServiceOrder, getServiceTypes, getClients, getDevices, createServiceOrder, updateServiceOrder, deleteServiceOrder } from '../services/api'
+import { getServiceOrders, getServiceOrder, getServiceTypes, getClients, getClientDevices, createServiceOrder, updateServiceOrder, deleteServiceOrder } from '../services/api'
 import Modal from '../components/Modal'
 
 interface ServiceOrder {
@@ -79,9 +79,10 @@ export default function ServiceOrderListPage() {
     } catch {}
   }
 
-  const fetchDevices = async () => {
+  const fetchDevicesByClient = async (clientId: number) => {
+    if (!clientId) { setDevices([]); return }
     try {
-      const data = await getDevices()
+      const data = await getClientDevices(clientId)
       const list: DeviceOption[] = Array.isArray(data) ? data : data.data || []
       setDevices(list)
     } catch {}
@@ -94,7 +95,13 @@ export default function ServiceOrderListPage() {
     } catch {}
   }
 
-  useEffect(() => { fetchOrders(); fetchClients(); fetchDevices(); fetchServiceTypes() }, [])
+  useEffect(() => { fetchOrders(); fetchClients(); fetchServiceTypes() }, [])
+
+  useEffect(() => {
+    if (modal && !editingId && form.client_id) {
+      fetchDevicesByClient(form.client_id)
+    }
+  }, [form.client_id, modal, editingId])
 
   const openNew = () => {
     setEditingId(null)
@@ -119,6 +126,7 @@ export default function ServiceOrderListPage() {
       })
       setFormErrors({})
       setModal(true)
+      await fetchDevicesByClient(order.client_id)
     } catch {
       setError('Error al cargar orden de servicio')
     }
@@ -166,12 +174,6 @@ export default function ServiceOrderListPage() {
       setError('Error al eliminar orden de servicio')
     }
   }
-
-  const filteredDevices = editingId
-    ? devices
-    : form.client_id
-      ? devices.filter(d => d.id === form.client_id || devices.some(dd => dd.id === form.device_id))
-      : devices
 
   return (
     <div className="max-w-6xl mx-auto mt-10 p-6">
