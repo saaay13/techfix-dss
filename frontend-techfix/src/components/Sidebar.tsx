@@ -13,6 +13,7 @@ export default function Sidebar() {
     { label: 'Órdenes', path: '/ordenes' },
     { label: 'Inventario', path: '/componentes' },
     ...(isAdmin ? [{ label: 'Usuarios', path: '/usuarios' }] : []),
+    ...(isAdmin ? [{ label: 'Pagos', path: '/pagos/nuevo' }] : []),
     { label: 'Reportes', path: '/reportes/financieros' },
     { label: 'Dashboard Ingresos', path: '/dashboard/ingresos' },
   ]

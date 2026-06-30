@@ -10,6 +10,7 @@ use App\Http\Controllers\ComponentController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ServiceOrderController;
 use App\Http\Controllers\ServiceTypeController;
+use App\Http\Controllers\PaymentController;
 
 Route::get('/ping', function () {
     return response()->json([
@@ -36,6 +37,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::middleware('role:Administrador')->group(function () {
         Route::apiResource('users', UserController::class);
         Route::apiResource('roles', RoleController::class);
+        Route::apiResource('payments', PaymentController::class)->only(['index', 'store', 'show']);
+        Route::get('service-orders/{service_order}/payments', [PaymentController::class, 'byOrder']);
         Route::get('/reports/financial', function () {
             return response()->json(['message' => 'Reportes financieros']);
         });

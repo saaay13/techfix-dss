@@ -11,6 +11,7 @@ import ServiceOrderListPage from './pages/orders/ServiceOrderListPage'
 import ComponentListPage from './pages/inventory/ComponentListPage'
 import UserListPage from './pages/users/UserListPage'
 import PlaceholderPage from './pages/PlaceholderPage'
+import PaymentForm from './pages/payments/PaymentForm'
 
 export default function App() {
   return (
@@ -27,6 +28,7 @@ export default function App() {
           <Route path="/usuarios" element={<PrivateRoute><ProtectedRoute roles={['Administrador']}><Layout><UserListPage /></Layout></ProtectedRoute></PrivateRoute>} />
           <Route path="/reportes/financieros" element={<PrivateRoute><ProtectedRoute roles={['Administrador']}><Layout><PlaceholderPage title="Reportes Financieros" /></Layout></ProtectedRoute></PrivateRoute>} />
           <Route path="/dashboard/ingresos" element={<PrivateRoute><ProtectedRoute roles={['Administrador']}><Layout><PlaceholderPage title="Dashboard de Ingresos" /></Layout></ProtectedRoute></PrivateRoute>} />
+          <Route path="/pagos/nuevo" element={<PrivateRoute><ProtectedRoute roles={['Administrador']}><Layout><PaymentForm /></Layout></ProtectedRoute></PrivateRoute>} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </AuthProvider>
