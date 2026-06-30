@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ServiceOrder;
+use App\Models\StatusHistory;
 use App\Http\Requests\StoreServiceOrderRequest;
 use App\Http\Requests\UpdateServiceOrderRequest;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -80,8 +81,12 @@ class ServiceOrderController extends Controller
         ];
 
         $request->validate([
-            'nota' => ['required_if:estado_nuevo,En reparación,Finalizado', 'string', 'max:1000'],
+            'estado_nuevo' => ['required', 'string'],
         ]);
+
+        if (in_array($request->estado_nuevo, ['En reparación', 'Finalizado'])) {
+            $request->validate(['nota' => ['required', 'string', 'max:1000']]);
+        }
 
         $nuevoEstado = $request->estado_nuevo;
         $estadoActual = $serviceOrder->estado;
@@ -100,12 +105,20 @@ class ServiceOrderController extends Controller
         }
 
         $serviceOrder->update(['estado' => $nuevoEstado]);
+
+        StatusHistory::create([
+            'service_order_id' => $serviceOrder->id,
+            'estado_anterior' => $estadoActual,
+            'estado_nuevo' => $nuevoEstado,
+            'nota' => $request->nota,
+            'user_id' => auth()->id(),
+        ]);
+
         $serviceOrder->load(['client', 'device', 'serviceType', 'user']);
 
         return response()->json([
             'message' => "Estado actualizado a '{$nuevoEstado}'.",
             'service_order' => $serviceOrder,
-            'nota' => $request->nota,
         ]);
     }
 
