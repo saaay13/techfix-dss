@@ -18,5 +18,14 @@ class UserSeeder extends Seeder
             'role_id' => 1,
             'activo' => true,
         ]);
+        DB::table('users')->insert([
+            'name' => 'Tecnico',
+            'apellido' => 'Sanabria',
+            'email' => 'tecnico@techfix.com',
+            'password' => bcrypt('12345678'),
+            'telefono' => '70000000',
+            'role_id' => 2,
+            'activo' => true,
+        ]);
     }
 }

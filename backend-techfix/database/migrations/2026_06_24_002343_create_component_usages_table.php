@@ -17,6 +17,8 @@ return new class extends Migration
             $table->decimal('precio_unitario', 10, 2);
             $table->foreignId('service_order_id')->constrained();
             $table->foreignId('component_id')->constrained();
+            $table->index('service_order_id');
+            $table->index('component_id');
             $table->timestamps();
         });
     }

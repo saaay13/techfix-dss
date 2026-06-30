@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('estado_fisico', 50)->nullable();
             $table->boolean('activo')->default(true);
             $table->foreignId('client_id')->constrained();
+            $table->index('client_id');
             $table->timestamps();
         });
     }

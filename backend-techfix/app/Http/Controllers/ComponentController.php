@@ -3,63 +3,45 @@
 namespace App\Http\Controllers;
 
 use App\Models\Component;
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreComponentRequest;
+use App\Http\Requests\UpdateComponentRequest;
 
 class ComponentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $components = Component::with('category')->orderBy('created_at', 'desc')->get();
+        return response()->json($components);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function store(StoreComponentRequest $request)
     {
-        //
+        $component = Component::create($request->validated());
+        return response()->json([
+            'message' => 'Componente registrado exitosamente.',
+            'component' => $component,
+        ], 201);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
     public function show(Component $component)
     {
-        //
+        return response()->json($component);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Component $component)
+    public function update(UpdateComponentRequest $request, Component $component)
     {
-        //
+        $component->update($request->validated());
+        return response()->json([
+            'message' => 'Componente actualizado exitosamente.',
+            'component' => $component,
+        ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Component $component)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Component $component)
     {
-        //
+        $component->delete();
+        return response()->json([
+            'message' => 'Componente eliminado exitosamente.',
+        ]);
     }
 }

@@ -27,13 +27,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (token) {
+    const cached = localStorage.getItem('user');
+    if (token && cached) {
+      try { setUser(JSON.parse(cached)) } catch { localStorage.removeItem('user') }
+      setLoading(false);
+    } else if (token) {
       api.get('/me')
-        .then((res) => setUser(res.data))
-        .catch(() => {
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
-        })
+        .then((res) => { setUser(res.data); localStorage.setItem('user', JSON.stringify(res.data)) })
+        .catch(() => { localStorage.removeItem('token'); localStorage.removeItem('user') })
         .finally(() => setLoading(false));
     } else {
       setLoading(false);
@@ -48,7 +49,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = async () => {
-    try { await api.post('/logout'); } catch {}
+    api.post('/logout').catch(() => {});
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setUser(null);
