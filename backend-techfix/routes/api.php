@@ -36,6 +36,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::middleware('role:Administrador')->group(function () {
         Route::apiResource('users', UserController::class);
         Route::apiResource('roles', RoleController::class);
+        Route::post('service-types', [ServiceTypeController::class, 'store']);
+        Route::put('service-types/{service_type}', [ServiceTypeController::class, 'update']);
+        Route::delete('service-types/{service_type}', [ServiceTypeController::class, 'destroy']);
         Route::get('/reports/financial', function () {
             return response()->json(['message' => 'Reportes financieros']);
         });

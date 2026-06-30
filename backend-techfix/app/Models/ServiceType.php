@@ -11,12 +11,15 @@ class ServiceType extends Model
 
     protected $fillable = [
         'nombre',
+        'descripcion',
+        'precio',
         'activo',
     ];
 
     protected function casts(): array
     {
         return [
+            'precio' => 'decimal:2',
             'activo' => 'boolean',
         ];
     }

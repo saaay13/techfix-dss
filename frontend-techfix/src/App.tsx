@@ -10,6 +10,7 @@ import DeviceListPage from './pages/devices/DeviceListPage'
 import ServiceOrderListPage from './pages/orders/ServiceOrderListPage'
 import ComponentListPage from './pages/inventory/ComponentListPage'
 import UserListPage from './pages/users/UserListPage'
+import ServiceTypeListPage from './pages/service-types/ServiceTypeListPage'
 import PlaceholderPage from './pages/PlaceholderPage'
 
 export default function App() {
@@ -25,6 +26,7 @@ export default function App() {
           <Route path="/ordenes" element={<PrivateRoute><Layout><ServiceOrderListPage /></Layout></PrivateRoute>} />
           <Route path="/componentes" element={<PrivateRoute><Layout><ComponentListPage /></Layout></PrivateRoute>} />
           <Route path="/usuarios" element={<PrivateRoute><ProtectedRoute roles={['Administrador']}><Layout><UserListPage /></Layout></ProtectedRoute></PrivateRoute>} />
+          <Route path="/tipos-servicio" element={<PrivateRoute><ProtectedRoute roles={['Administrador']}><Layout><ServiceTypeListPage /></Layout></ProtectedRoute></PrivateRoute>} />
           <Route path="/reportes/financieros" element={<PrivateRoute><ProtectedRoute roles={['Administrador']}><Layout><PlaceholderPage title="Reportes Financieros" /></Layout></ProtectedRoute></PrivateRoute>} />
           <Route path="/dashboard/ingresos" element={<PrivateRoute><ProtectedRoute roles={['Administrador']}><Layout><PlaceholderPage title="Dashboard de Ingresos" /></Layout></ProtectedRoute></PrivateRoute>} />
           <Route path="*" element={<Navigate to="/" />} />
