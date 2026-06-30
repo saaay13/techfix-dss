@@ -48,8 +48,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(res.data.user);
   };
 
-  const logout = async () => {
-    try { await api.post('/logout'); } catch {}
+  const logout = () => {
+    api.post('/logout').catch(() => {});
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setUser(null);
