@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\ServiceOrder;
+use App\Models\StatusHistory;
 use App\Http\Requests\StoreServiceOrderRequest;
 use App\Http\Requests\UpdateServiceOrderRequest;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
+use Illuminate\Http\Request;
 
 class ServiceOrderController extends Controller
 {
@@ -67,6 +69,57 @@ class ServiceOrderController extends Controller
                 'message' => 'Error al actualizar la orden de servicio.',
             ], 500);
         }
+    }
+
+    public function updateStatus(Request $request, ServiceOrder $serviceOrder)
+    {
+        $validTransitions = [
+            'Recibido' => 'Diagnóstico',
+            'Diagnóstico' => 'En reparación',
+            'En reparación' => 'Finalizado',
+            'Finalizado' => 'Entregado',
+        ];
+
+        $request->validate([
+            'estado_nuevo' => ['required', 'string'],
+        ]);
+
+        if (in_array($request->estado_nuevo, ['En reparación', 'Finalizado'])) {
+            $request->validate(['nota' => ['required', 'string', 'max:1000']]);
+        }
+
+        $nuevoEstado = $request->estado_nuevo;
+        $estadoActual = $serviceOrder->estado;
+        $siguienteEstado = $validTransitions[$estadoActual] ?? null;
+
+        if (!$siguienteEstado) {
+            return response()->json([
+                'message' => "La orden ya está en estado final '{$estadoActual}'.",
+            ], 422);
+        }
+
+        if ($nuevoEstado !== $siguienteEstado) {
+            return response()->json([
+                'message' => "No se puede cambiar de '{$estadoActual}' a '{$nuevoEstado}'. El siguiente estado permitido es '{$siguienteEstado}'.",
+            ], 422);
+        }
+
+        $serviceOrder->update(['estado' => $nuevoEstado]);
+
+        StatusHistory::create([
+            'service_order_id' => $serviceOrder->id,
+            'estado_anterior' => $estadoActual,
+            'estado_nuevo' => $nuevoEstado,
+            'nota' => $request->nota,
+            'user_id' => auth()->id(),
+        ]);
+
+        $serviceOrder->load(['client', 'device', 'serviceType', 'user']);
+
+        return response()->json([
+            'message' => "Estado actualizado a '{$nuevoEstado}'.",
+            'service_order' => $serviceOrder,
+        ]);
     }
 
     public function destroy(ServiceOrder $serviceOrder)

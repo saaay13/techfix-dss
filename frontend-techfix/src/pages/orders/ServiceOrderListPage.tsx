@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { getServiceOrders, getServiceOrder, getServiceTypes, createServiceOrder, updateServiceOrder, deleteServiceOrder } from '../../services/orders'
+import { getServiceOrders, getServiceOrder, getServiceTypes, createServiceOrder, updateServiceOrder, deleteServiceOrder, updateServiceOrderStatus } from '../../services/orders'
 import { getClients } from '../../services/clients'
 import { getClientDevices } from '../../services/devices'
 import Modal from '../../components/Modal'
@@ -64,6 +64,39 @@ export default function ServiceOrderListPage() {
   const [form, setForm] = useState(emptyForm)
   const [formErrors, setFormErrors] = useState<Record<string, string>>({})
   const [saving, setSaving] = useState(false)
+  const [statusModal, setStatusModal] = useState(false)
+  const [statusOrder, setStatusOrder] = useState<ServiceOrder | null>(null)
+  const [statusNote, setStatusNote] = useState('')
+
+  const getNextState = (estado: string) => {
+    const map: Record<string, string> = {
+      Recibido: 'Diagnóstico',
+      Diagnóstico: 'En reparación',
+      'En reparación': 'Finalizado',
+      Finalizado: 'Entregado',
+    }
+    return map[estado] || null
+  }
+
+  const openStatusModal = (order: ServiceOrder) => {
+    setStatusOrder(order)
+    setStatusNote('')
+    setStatusModal(true)
+  }
+
+  const handleAdvanceStatus = async () => {
+    if (!statusOrder) return
+    const next = getNextState(statusOrder.estado)
+    if (!next) return
+    try {
+      await updateServiceOrderStatus(statusOrder.id, { estado_nuevo: next, nota: statusNote })
+      setStatusModal(false)
+      setStatusOrder(null)
+      fetchOrders()
+    } catch (err: any) {
+      setError(err.message || 'Error al avanzar estado')
+    }
+  }
 
   const fetchOrders = async () => {
     try {
@@ -226,6 +259,9 @@ export default function ServiceOrderListPage() {
                   </td>
                   <td className="px-4 py-3 text-muted-foreground">{order.fecha_ingreso}</td>
                   <td className="px-4 py-3 text-right space-x-2">
+                    {order.estado !== 'Entregado' && (
+                      <button onClick={() => openStatusModal(order)} className="px-3 py-1 bg-success/10 text-success rounded-lg text-xs font-medium hover:bg-success/20 transition-colors">Avanzar</button>
+                    )}
                     <button onClick={() => openEdit(order.id)} className="px-3 py-1 bg-primary/10 text-primary-600 rounded-lg text-xs font-medium hover:bg-primary/20 transition-colors">Editar</button>
                     <button onClick={() => handleDelete(order.id, String(order.id))} className="px-3 py-1 bg-error/10 text-error rounded-lg text-xs font-medium hover:bg-error/20 transition-colors">Eliminar</button>
                   </td>
@@ -330,6 +366,64 @@ export default function ServiceOrderListPage() {
             </button>
           </div>
         </form>
+      </Modal>
+
+      <Modal open={statusModal} onClose={() => setStatusModal(false)} title="Avanzar Estado">
+        {statusOrder && (
+          <div className="space-y-4">
+            <div className="flex items-center gap-1 text-xs">
+              {ESTADOS.map((estado, i) => {
+                const currentIdx = ESTADOS.indexOf(statusOrder.estado)
+                const nextIdx = currentIdx + 1
+                const isActive = i === currentIdx
+                const isNext = i === nextIdx
+                const isPast = i < currentIdx
+                return (
+                  <div key={estado} className="flex items-center gap-1 flex-1">
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      isPast ? 'bg-success/10 text-success'
+                      : isActive ? 'bg-primary/10 text-primary font-bold'
+                      : isNext ? 'bg-blue-100 text-blue-800 ring-2 ring-primary/40'
+                      : 'bg-muted text-muted-foreground'
+                    }`}>
+                      {estado}
+                    </span>
+                    {i < ESTADOS.length - 1 && <div className="h-px flex-1 bg-border" />}
+                  </div>
+                )
+              })}
+            </div>
+
+            <div className="p-4 bg-muted/30 rounded-lg text-sm">
+              <p className="text-foreground font-medium">Estado actual: <span className="text-primary">{statusOrder.estado}</span></p>
+              <p className="text-muted-foreground mt-1">Siguiente: <span className="font-medium text-foreground">{getNextState(statusOrder.estado)}</span></p>
+            </div>
+
+            {(getNextState(statusOrder.estado) === 'En reparación' || getNextState(statusOrder.estado) === 'Finalizado') && (
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-1">Nota obligatoria</label>
+                <textarea
+                  value={statusNote}
+                  onChange={e => setStatusNote(e.target.value)}
+                  rows={3}
+                  className="w-full px-3 py-2 border border-input rounded-lg text-sm bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                  placeholder="Describa el trabajo realizado o motivo del cambio..."
+                />
+              </div>
+            )}
+
+            <div className="flex gap-3 pt-2">
+              <button onClick={handleAdvanceStatus} disabled={!getNextState(statusOrder.estado)}
+                className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:bg-primary-700 disabled:opacity-50 transition-colors">
+                Avanzar a {getNextState(statusOrder.estado)}
+              </button>
+              <button onClick={() => setStatusModal(false)}
+                className="px-4 py-2 bg-muted text-muted-foreground rounded-lg text-sm font-medium hover:bg-neutral-300 transition-colors">
+                Cancelar
+              </button>
+            </div>
+          </div>
+        )}
       </Modal>
     </div>
   )
