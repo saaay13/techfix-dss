@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Builder;
 
 class Component extends Model
 {
@@ -30,5 +31,11 @@ class Component extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function scopeCriticalStock(Builder $query): Builder
+    {
+        return $query->where('activo', true)
+            ->whereColumn('cantidad', '<=', 'stock_minimo');
     }
 }
