@@ -10,6 +10,7 @@ use App\Http\Controllers\ComponentController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ServiceOrderController;
 use App\Http\Controllers\ServiceTypeController;
+use App\Http\Controllers\ActivityController;
 
 Route::get('/ping', function () {
     return response()->json([
@@ -34,6 +35,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('components', ComponentController::class);
 
     Route::middleware('role:Administrador')->group(function () {
+        Route::apiResource('activities', ActivityController::class);
         Route::apiResource('users', UserController::class);
         Route::apiResource('roles', RoleController::class);
         Route::get('/reports/financial', function () {

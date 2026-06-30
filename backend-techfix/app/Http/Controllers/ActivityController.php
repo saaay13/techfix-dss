@@ -3,63 +3,46 @@
 namespace App\Http\Controllers;
 
 use App\Models\Activity;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ActivityController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(): JsonResponse
     {
-        //
+        $activities = Activity::active()->orderBy('nombre')->get();
+        return response()->json($activities);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function store(Request $request): JsonResponse
     {
-        //
+        $validated = $request->validate([
+            'nombre' => 'required|string|max:255|unique:activities,nombre',
+        ]);
+
+        $activity = Activity::create($validated);
+        return response()->json($activity, 201);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function show(Activity $activity): JsonResponse
     {
-        //
+        return response()->json($activity);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Activity $activity)
+    public function update(Request $request, Activity $activity): JsonResponse
     {
-        //
+        $validated = $request->validate([
+            'nombre' => 'required|string|max:255|unique:activities,nombre,' . $activity->id,
+            'activo' => 'boolean',
+        ]);
+
+        $activity->update($validated);
+        return response()->json($activity);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Activity $activity)
+    public function destroy(Activity $activity): JsonResponse
     {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Activity $activity)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Activity $activity)
-    {
-        //
+        $activity->update(['activo' => false]);
+        return response()->json(['message' => 'Actividad desactivada']);
     }
 }
