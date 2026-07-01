@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\ServiceOrder;
+use App\Models\ServiceOrderItem;
+use App\Models\ServiceType;
 use App\Models\StatusHistory;
 use App\Http\Requests\StoreServiceOrderRequest;
 use App\Http\Requests\UpdateServiceOrderRequest;
@@ -14,7 +16,7 @@ class ServiceOrderController extends Controller
 {
     public function index()
     {
-        $orders = ServiceOrder::with(['client', 'device', 'serviceType', 'user'])
+        $orders = ServiceOrder::with(['client', 'device', 'user', 'items.serviceType'])
             ->orderBy('created_at', 'desc')
             ->get();
         return response()->json($orders);
@@ -23,14 +25,24 @@ class ServiceOrderController extends Controller
     public function store(StoreServiceOrderRequest $request)
     {
         try {
-            $data = $request->validated();
+            $itemsData = $request->input('items', []);
+            $data = $request->safe()->except(['items']);
             $data['estado'] = 'Recibido';
             $data['fecha_ingreso'] = now()->toDateString();
-            $data['costo_total'] = 0;
             $data['user_id'] = auth()->id();
+            $data['costo_total'] = collect($itemsData)->sum('precio');
 
             $order = ServiceOrder::create($data);
-            $order->load(['client', 'device', 'serviceType', 'user']);
+
+            foreach ($itemsData as $item) {
+                $order->items()->create([
+                    'service_type_id' => $item['service_type_id'],
+                    'descripcion' => $item['descripcion'] ?? null,
+                    'precio' => $item['precio'],
+                ]);
+            }
+
+            $order->load(['client', 'device', 'user', 'items.serviceType']);
 
             return response()->json([
                 'message' => 'Orden de servicio creada exitosamente.',
@@ -49,16 +61,30 @@ class ServiceOrderController extends Controller
 
     public function show(ServiceOrder $serviceOrder)
     {
-        $serviceOrder->load(['client', 'device', 'serviceType', 'user']);
+        $serviceOrder->load(['client', 'device', 'user', 'items.serviceType']);
         return response()->json($serviceOrder);
     }
 
     public function update(UpdateServiceOrderRequest $request, ServiceOrder $serviceOrder)
     {
         try {
-            $data = $request->validated();
+            $itemsData = $request->input('items');
+            $data = $request->safe()->except(['items']);
+
+            if ($itemsData !== null) {
+                $data['costo_total'] = collect($itemsData)->sum('precio');
+                $serviceOrder->items()->delete();
+                foreach ($itemsData as $item) {
+                    $serviceOrder->items()->create([
+                        'service_type_id' => $item['service_type_id'],
+                        'descripcion' => $item['descripcion'] ?? null,
+                        'precio' => $item['precio'],
+                    ]);
+                }
+            }
+
             $serviceOrder->update($data);
-            $serviceOrder->load(['client', 'device', 'serviceType', 'user']);
+            $serviceOrder->load(['client', 'device', 'user', 'items.serviceType']);
 
             return response()->json([
                 'message' => 'Orden de servicio actualizada exitosamente.',
@@ -114,7 +140,7 @@ class ServiceOrderController extends Controller
             'user_id' => auth()->id(),
         ]);
 
-        $serviceOrder->load(['client', 'device', 'serviceType', 'user']);
+        $serviceOrder->load(['client', 'device', 'user', 'items.serviceType']);
 
         return response()->json([
             'message' => "Estado actualizado a '{$nuevoEstado}'.",
