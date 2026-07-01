@@ -103,12 +103,22 @@ class ActivityTest extends TestCase
             ->assertJsonValidationErrors(['nombre']);
     }
 
-    public function test_tecnico_cannot_access_activities(): void
+    public function test_tecnico_can_list_activities(): void
     {
         $token = $this->loginAsTecnico();
 
         $response = $this->withHeader('Authorization', "Bearer $token")
             ->getJson('/api/activities');
+
+        $response->assertStatus(200);
+    }
+
+    public function test_tecnico_cannot_create_activity(): void
+    {
+        $token = $this->loginAsTecnico();
+
+        $response = $this->withHeader('Authorization', "Bearer $token")
+            ->postJson('/api/activities', ['nombre' => 'Nueva']);
 
         $response->assertStatus(403);
     }

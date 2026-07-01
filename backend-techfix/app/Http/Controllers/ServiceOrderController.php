@@ -6,6 +6,8 @@ use App\Models\ServiceOrder;
 use App\Models\ServiceOrderItem;
 use App\Models\ServiceType;
 use App\Models\StatusHistory;
+use App\Models\ActivityLog;
+use App\Models\Activity;
 use App\Http\Requests\StoreServiceOrderRequest;
 use App\Http\Requests\UpdateServiceOrderRequest;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -146,6 +148,38 @@ class ServiceOrderController extends Controller
             'message' => "Estado actualizado a '{$nuevoEstado}'.",
             'service_order' => $serviceOrder,
         ]);
+    }
+
+    public function storeActivity(Request $request, ServiceOrder $serviceOrder)
+    {
+        $validated = $request->validate([
+            'activity_id' => 'required|integer|exists:activities,id',
+            'descripcion_personalizada' => 'nullable|string|max:500',
+        ]);
+
+        $item = $serviceOrder->items()->first();
+
+        if (!$item) {
+            return response()->json([
+                'message' => 'La orden no tiene servicios asociados. Agregue un servicio antes de registrar actividades.',
+            ], 422);
+        }
+
+        $activity = Activity::findOrFail($validated['activity_id']);
+
+        $log = ActivityLog::create([
+            'service_order_item_id' => $item->id,
+            'activity_id' => $activity->id,
+            'user_id' => auth()->id(),
+            'descripcion_personalizada' => $validated['descripcion_personalizada'] ?? null,
+        ]);
+
+        $log->load(['activity', 'user']);
+
+        return response()->json([
+            'message' => 'Actividad registrada exitosamente.',
+            'activity_log' => $log,
+        ], 201);
     }
 
     public function destroy(ServiceOrder $serviceOrder)

@@ -36,9 +36,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('categories', CategoryController::class)->only(['index', 'show']);
     Route::get('/components/critical-stock', [ComponentController::class, 'criticalStock']);
     Route::apiResource('components', ComponentController::class);
+    Route::get('activities', [ActivityController::class, 'index']);
+    Route::get('activities/{activity}', [ActivityController::class, 'show']);
+    Route::post('service-orders/{service_order}/activities', [ServiceOrderController::class, 'storeActivity']);
 
     Route::middleware('role:Administrador')->group(function () {
-        Route::apiResource('activities', ActivityController::class);
+        Route::apiResource('activities', ActivityController::class)->except(['index', 'show']);
         Route::apiResource('users', UserController::class);
         Route::apiResource('roles', RoleController::class);
         Route::post('service-types', [ServiceTypeController::class, 'store']);
