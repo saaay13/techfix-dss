@@ -10,6 +10,7 @@ use App\Http\Controllers\ComponentController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ServiceOrderController;
 use App\Http\Controllers\ServiceTypeController;
+use App\Http\Controllers\ServiceOrderPdfController;
 
 Route::get('/ping', function () {
     return response()->json([
@@ -30,6 +31,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('devices', DeviceController::class);
     Route::apiResource('service-types', ServiceTypeController::class)->only(['index', 'show']);
     Route::apiResource('service-orders', ServiceOrderController::class);
+    Route::get('service-orders/{id}/pdf', [ServiceOrderPdfController::class, 'generatePdf']);
     Route::apiResource('categories', CategoryController::class)->only(['index', 'show']);
     Route::apiResource('components', ComponentController::class);
 
