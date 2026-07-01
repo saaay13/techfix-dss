@@ -17,6 +17,8 @@ class ServiceTypeFactory extends Factory
                 'Diagnóstico',
                 'Recuperación de datos',
             ]),
+            'descripcion' => fake()->optional()->sentence(),
+            'precio' => fake()->randomFloat(2, 50, 1000),
             'activo' => true,
         ];
     }

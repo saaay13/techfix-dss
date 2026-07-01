@@ -13,8 +13,7 @@ export default function Sidebar() {
     { label: 'Órdenes', path: '/ordenes' },
     { label: 'Inventario', path: '/componentes' },
     { label: 'Alertas Stock', path: '/alertas-stock' },
-    ...(isAdmin ? [{ label: 'Actividades', path: '/actividades' }] : []),
-    ...(isAdmin ? [{ label: 'Usuarios', path: '/usuarios' }] : []),
+    ...(isAdmin ? [{ label: 'Actividades', path: '/actividades' }, { label: 'Tipos Servicio', path: '/tipos-servicio' }, { label: 'Usuarios', path: '/usuarios' }] : []),
     { label: 'Reportes', path: '/reportes/financieros' },
     { label: 'Dashboard Ingresos', path: '/dashboard/ingresos' },
   ]
