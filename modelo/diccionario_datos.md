@@ -52,6 +52,8 @@
 |---------|------|-------------|
 | id (PK) | int | Identificador único del tipo de servicio |
 | nombre | varchar(100) | Nombre (Mantenimiento preventivo, Mantenimiento correctivo, Upgrade, Instalación, Diagnóstico, Recuperación de datos) |
+| descripcion | text | Descripción detallada del servicio |
+| precio | decimal(10,2) | Precio de referencia del servicio |
 | activo | boolean | Estado del registro |
 
 ## OrdenServicio
@@ -61,15 +63,24 @@
 | id (PK) | int | Identificador único de la orden |
 | fecha_ingreso | date | Fecha de recepción del equipo |
 | diagnostico_inicial | text | Descripción del diagnóstico inicial |
-| estado | varchar(50) | Estado (Recibido, Diagnóstico, En reparación, Esperando repuestos, Finalizado, Entregado) |
+| estado | varchar(50) | Estado (Recibido, Diagnóstico, En reparación, Finalizado, Entregado) |
 | prioridad | varchar(20) | Prioridad (Baja, Media, Alta) |
 | fecha_estimada_entrega | date | Fecha estimada de entrega |
 | observaciones | text | Observaciones adicionales |
-| costo_total | decimal(10,2) | Costo total del servicio |
+| costo_total | decimal(10,2) | Costo total del servicio (suma de precios de items) |
 | cliente_id (FK → Cliente.id) | int | Cliente asociado a la orden |
 | equipo_id (FK → Equipo.id) | int | Equipo asociado a la orden |
-| tipo_servicio_id (FK → TipoServicio.id) | int | Tipo de servicio solicitado |
 | usuario_id (FK → Usuario.id) | int | Técnico responsable |
+
+## ServiceOrderItem
+
+| Columna | Tipo | Descripción |
+|---------|------|-------------|
+| id (PK) | int | Identificador único del item de servicio |
+| service_order_id (FK → OrdenServicio.id) | int | Orden de servicio relacionada |
+| service_type_id (FK → TipoServicio.id) | int | Tipo de servicio contratado |
+| descripcion | text | Descripción personalizada del servicio |
+| precio | decimal(10,2) | Precio del servicio individual |
 
 ## Actividad
 
@@ -79,15 +90,27 @@
 | nombre | varchar(100) | Nombre (Limpieza interna, Cambio de pasta térmica, Formateo, Instalación de Windows, Actualización de BIOS) |
 | activo | boolean | Estado del registro |
 
-## ActividadRealizada
+## ActivityLog (Actividad Realizada)
 
 | Columna | Tipo | Descripción |
 |---------|------|-------------|
 | id (PK) | int | Identificador único |
 | descripcion_personalizada | text | Descripción adicional de la actividad |
-| orden_servicio_id (FK → OrdenServicio.id) | int | Orden de servicio relacionada |
-| actividad_id (FK → Actividad.id) | int | Actividad ejecutada |
+| service_order_item_id (FK → ServiceOrderItem.id) | int | Item de servicio relacionado |
+| activity_id (FK → Actividad.id) | int | Actividad ejecutada |
 | usuario_id (FK → Usuario.id) | int | Técnico que ejecutó la actividad |
+
+## StatusHistory
+
+| Columna | Tipo | Descripción |
+|---------|------|-------------|
+| id (PK) | int | Identificador único del cambio de estado |
+| service_order_id (FK → OrdenServicio.id) | int | Orden de servicio relacionada |
+| estado_anterior | varchar(50) | Estado previo al cambio |
+| estado_nuevo | varchar(50) | Estado después del cambio |
+| nota | text | Nota obligatoria al cambiar a En reparación o Finalizado |
+| user_id (FK → Usuario.id) | int | Usuario que realizó el cambio |
+| created_at | datetime | Fecha y hora del cambio |
 
 ## Categoria
 
@@ -110,32 +133,22 @@
 | activo | boolean | Estado del registro |
 | categoria_id (FK → Categoria.id) | int | Categoría del componente |
 
-## ComponenteUtilizado
-
-| Columna | Tipo | Descripción |
-|---------|------|-------------|
-| id (PK) | int | Identificador único |
-| cantidad | int | Cantidad utilizada |
-| precio_unitario | decimal(10,2) | Precio unitario al momento del uso |
-| orden_servicio_id (FK → OrdenServicio.id) | int | Orden de servicio relacionada |
-| componente_id (FK → Componente.id) | int | Componente utilizado |
-
-## CambioComponente
+## ComponentSwap (Cambio de Componente)
 
 | Columna | Tipo | Descripción |
 |---------|------|-------------|
 | id (PK) | int | Identificador único del cambio |
 | observaciones | text | Observaciones del cambio |
-| orden_servicio_id (FK → OrdenServicio.id) | int | Orden de servicio relacionada |
+| service_order_id (FK → OrdenServicio.id) | int | Orden de servicio relacionada |
 
-## DetalleCambio
+## SwapDetail (Detalle de Cambio)
 
 | Columna | Tipo | Descripción |
 |---------|------|-------------|
 | id (PK) | int | Identificador único del detalle |
 | tipo | varchar(20) | Tipo (retirado, instalado) |
 | cantidad | int | Cantidad de componentes |
-| cambio_componente_id (FK → CambioComponente.id) | int | Cambio de componente relacionado |
+| component_swap_id (FK → ComponentSwap.id) | int | Cambio de componente relacionado |
 | componente_id (FK → Componente.id) | int | Componente referenciado |
 
 ## Pago
@@ -146,4 +159,4 @@
 | monto | decimal(10,2) | Monto del pago |
 | metodo_pago | varchar(50) | Método (Efectivo, Transferencia, Tarjeta, QR) |
 | fecha | date | Fecha del pago |
-| orden_servicio_id (FK → OrdenServicio.id) | int | Orden de servicio relacionada |
+| servicio_order_id (FK → OrdenServicio.id) | int | Orden de servicio relacionada |

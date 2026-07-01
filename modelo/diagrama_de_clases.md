@@ -30,6 +30,8 @@ class Equipo {
 class TipoServicio {
     +int id
     +string nombre
+    +string descripcion
+    +decimal precio
     +bool activo
     +listar()
 }
@@ -47,16 +49,30 @@ class OrdenServicio {
     +actualizarEstado()
 }
 
+class ServiceOrderItem {
+    +int id
+    +string descripcion
+    +decimal precio
+}
+
 class Actividad {
     +int id
     +string nombre
     +bool activo
 }
 
-class ActividadRealizada {
+class ActivityLog {
     +int id
     +string descripcion_personalizada
     +registrar()
+}
+
+class StatusHistory {
+    +int id
+    +string estado_anterior
+    +string estado_nuevo
+    +string nota
+    +datetime created_at
 }
 
 class Categoria {
@@ -78,19 +94,13 @@ class Componente {
     +verificarStockCritico()
 }
 
-class ComponenteUtilizado {
-    +int id
-    +int cantidad
-    +decimal precio_unitario
-}
-
-class CambioComponente {
+class ComponentSwap {
     +int id
     +string observaciones
     +registrar()
 }
 
-class DetalleCambio {
+class SwapDetail {
     +int id
     +string tipo
     +int cantidad
@@ -125,29 +135,31 @@ Cliente "1" --> "*" Equipo : posee
 
 Equipo "1" --> "*" OrdenServicio : tiene
 
-TipoServicio "1" --> "*" OrdenServicio : clasifica
+TipoServicio "1" --> "*" ServiceOrderItem : clasifica
 
 Rol "1" --> "*" Usuario : asigna
 
 Usuario "1" --> "*" OrdenServicio : registra
 
-OrdenServicio *--> "*" ActividadRealizada : contiene
+Usuario "1" --> "*" ActivityLog : ejecuta
 
-Actividad "1" --> "*" ActividadRealizada : describe
+Usuario "1" --> "*" StatusHistory : crea
 
-Usuario "1" --> "*" ActividadRealizada : ejecuta
+OrdenServicio "1" --> "*" ServiceOrderItem : contiene
+
+OrdenServicio "1" --> "*" StatusHistory : registra
+
+ServiceOrderItem *--> "*" ActivityLog : contiene
+
+Actividad "1" --> "*" ActivityLog : describe
 
 Categoria "1" --> "*" Componente : agrupa
 
-OrdenServicio *--> "*" ComponenteUtilizado : consume
+OrdenServicio *--> "*" ComponentSwap : incluye
 
-Componente "1" --> "*" ComponenteUtilizado : registra
+ComponentSwap "1" --> "*" SwapDetail : tiene
 
-OrdenServicio *--> "*" CambioComponente : incluye
-
-CambioComponente "1" --> "*" DetalleCambio : tiene
-
-DetalleCambio "*" --> "1" Componente : referencia
+SwapDetail "*" --> "1" Componente : referencia
 
 OrdenServicio *--> "*" Pago : registra
 ```

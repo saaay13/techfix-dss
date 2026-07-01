@@ -41,6 +41,8 @@ erDiagram
     TipoServicio {
         int id PK
         string nombre
+        string descripcion
+        decimal precio
         bool activo
     }
 
@@ -55,8 +57,15 @@ erDiagram
         decimal costo_total
         int cliente_id FK
         int equipo_id FK
-        int tipo_servicio_id FK
         int usuario_id FK
+    }
+
+    ServiceOrderItem {
+        int id PK
+        int service_order_id FK
+        int service_type_id FK
+        string descripcion
+        decimal precio
     }
 
     Actividad {
@@ -65,12 +74,22 @@ erDiagram
         bool activo
     }
 
-    ActividadRealizada {
+    ActivityLog {
         int id PK
         string descripcion_personalizada
-        int orden_servicio_id FK
-        int actividad_id FK
+        int service_order_item_id FK
+        int activity_id FK
         int usuario_id FK
+    }
+
+    StatusHistory {
+        int id PK
+        int service_order_id FK
+        string estado_anterior
+        string estado_nuevo
+        string nota
+        int user_id FK
+        datetime created_at
     }
 
     Categoria {
@@ -90,25 +109,17 @@ erDiagram
         int categoria_id FK
     }
 
-    ComponenteUtilizado {
-        int id PK
-        int cantidad
-        decimal precio_unitario
-        int orden_servicio_id FK
-        int componente_id FK
-    }
-
-    CambioComponente {
+    ComponentSwap {
         int id PK
         string observaciones
-        int orden_servicio_id FK
+        int service_order_id FK
     }
 
-    DetalleCambio {
+    SwapDetail {
         int id PK
         string tipo
         int cantidad
-        int cambio_componente_id FK
+        int component_swap_id FK
         int componente_id FK
     }
 
@@ -117,23 +128,24 @@ erDiagram
         decimal monto
         string metodo_pago
         date fecha
-        int orden_servicio_id FK
+        int servicio_order_id FK
     }
 
     Rol ||--o{ Usuario : tiene
     Usuario ||--o{ OrdenServicio : registra
-    Usuario ||--o{ ActividadRealizada : ejecuta
+    Usuario ||--o{ ActivityLog : ejecuta
+    Usuario ||--o{ StatusHistory : crea
     Cliente ||--o{ Equipo : posee
     Cliente ||--o{ OrdenServicio : tiene
     Equipo ||--o{ OrdenServicio : genera
-    TipoServicio ||--o{ OrdenServicio : clasifica
-    OrdenServicio ||--o{ ActividadRealizada : contiene
-    Actividad ||--o{ ActividadRealizada : describe
-    OrdenServicio ||--o{ ComponenteUtilizado : consume
-    Componente ||--o{ ComponenteUtilizado : usado_en
-    OrdenServicio ||--o{ CambioComponente : incluye
-    CambioComponente ||--o{ DetalleCambio : tiene
-    Componente ||--o{ DetalleCambio : referencia
+    OrdenServicio ||--o{ ServiceOrderItem : contiene
+    TipoServicio ||--o{ ServiceOrderItem : clasifica
+    ServiceOrderItem ||--o{ ActivityLog : contiene
+    OrdenServicio ||--o{ StatusHistory : historial
+    Actividad ||--o{ ActivityLog : describe
+    OrdenServicio ||--o{ ComponentSwap : incluye
+    ComponentSwap ||--o{ SwapDetail : tiene
+    Componente ||--o{ SwapDetail : referencia
     Categoria ||--o{ Componente : agrupa
     OrdenServicio ||--o{ Pago : registra
 ```
