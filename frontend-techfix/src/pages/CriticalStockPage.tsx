@@ -37,7 +37,7 @@ export default function CriticalStockPage() {
         <p className="text-muted-foreground">Cargando...</p>
       ) : components.length === 0 ? (
         <div className="p-8 bg-card border border-border rounded-xl shadow-sm text-center">
-          <p className="text-green-600 font-medium">No hay componentes con stock crítico</p>
+          <p className="text-success font-medium">No hay componentes con stock crítico</p>
           <p className="text-sm text-muted-foreground mt-1">Todos los componentes tienen suficiente inventario</p>
         </div>
       ) : (
