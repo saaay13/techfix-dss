@@ -22,11 +22,9 @@ return new class extends Migration
             $table->decimal('costo_total', 10, 2)->default(0);
             $table->foreignId('client_id')->constrained();
             $table->foreignId('device_id')->constrained();
-            $table->foreignId('service_type_id')->constrained();
             $table->foreignId('user_id')->constrained();
             $table->index('client_id');
             $table->index('device_id');
-            $table->index('service_type_id');
             $table->index('user_id');
             $table->index('estado');
             $table->index('prioridad');

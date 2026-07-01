@@ -1,8 +1,17 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { getServiceOrders, getServiceOrder, getServiceTypes, createServiceOrder, updateServiceOrder, deleteServiceOrder, updateServiceOrderStatus } from '../../services/orders'
 import { getClients } from '../../services/clients'
 import { getClientDevices } from '../../services/devices'
 import Modal from '../../components/Modal'
+
+interface ServiceOrderItem {
+  id?: number
+  service_type_id: number
+  descripcion?: string
+  precio: number
+  serviceType?: { id: number; nombre: string }
+}
 
 interface ServiceOrder {
   id: number
@@ -15,11 +24,10 @@ interface ServiceOrder {
   costo_total: number
   client_id: number
   device_id: number
-  service_type_id: number
   user_id: number
   client: { id: number; nombre: string; apellido: string }
   device: { id: number; tipo_equipo: string; marca: string; modelo: string; numero_serie: string }
-  serviceType: { id: number; nombre: string }
+  items: ServiceOrderItem[]
   user: { id: number; name: string; apellido: string }
 }
 
@@ -42,18 +50,21 @@ const ESTADO_COLOR: Record<string, string> = {
   Entregado: 'bg-muted text-muted-foreground',
 }
 
+const emptyItem = { service_type_id: 0, descripcion: '', precio: 0 }
+
 const emptyForm = {
   client_id: 0,
   device_id: 0,
-  service_type_id: 0,
   diagnostico_inicial: '',
   prioridad: 'Media',
   estado: 'Recibido',
   fecha_estimada_entrega: '',
   observaciones: '',
+  items: [{ ...emptyItem }],
 }
 
 export default function ServiceOrderListPage() {
+  const navigate = useNavigate()
   const [orders, setOrders] = useState<ServiceOrder[] | null>(null)
   const [clients, setClients] = useState<Client[]>([])
   const [devices, setDevices] = useState<DeviceOption[]>([])
@@ -152,12 +163,16 @@ export default function ServiceOrderListPage() {
       setForm({
         client_id: order.client_id,
         device_id: order.device_id,
-        service_type_id: order.service_type_id,
         diagnostico_inicial: order.diagnostico_inicial,
         prioridad: order.prioridad,
         estado: order.estado,
         fecha_estimada_entrega: order.fecha_estimada_entrega || '',
         observaciones: order.observaciones || '',
+        items: (order.items || []).map((i: ServiceOrderItem) => ({
+          service_type_id: i.service_type_id,
+          descripcion: i.descripcion || '',
+          precio: i.precio,
+        })),
       })
       setFormErrors({})
       setModal(true)
@@ -169,8 +184,27 @@ export default function ServiceOrderListPage() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
-    setForm(prev => ({ ...prev, [name]: name === 'client_id' || name === 'device_id' || name === 'service_type_id' ? Number(value) : value }))
+    if (name.startsWith('items.')) {
+      const parts = name.split('.')
+      const idx = Number(parts[1])
+      const field = parts[2]
+      setForm(prev => {
+        const items = [...prev.items]
+        items[idx] = { ...items[idx], [field]: field === 'precio' || field === 'service_type_id' ? Number(value) : value }
+        return { ...prev, items }
+      })
+    } else {
+      setForm(prev => ({ ...prev, [name]: name === 'client_id' || name === 'device_id' ? Number(value) : value }))
+    }
     setFormErrors(prev => ({ ...prev, [name]: '' }))
+  }
+
+  const addItem = () => {
+    setForm(prev => ({ ...prev, items: [...prev.items, { ...emptyItem }] }))
+  }
+
+  const removeItem = (idx: number) => {
+    setForm(prev => ({ ...prev, items: prev.items.filter((_, i) => i !== idx) }))
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -178,10 +212,11 @@ export default function ServiceOrderListPage() {
     setSaving(true)
     setFormErrors({})
     try {
+      const payload = { ...form, items: form.items.map(i => ({ ...i, precio: Number(i.precio) })) }
       if (editingId) {
-        await updateServiceOrder(editingId, form)
+        await updateServiceOrder(editingId, payload)
       } else {
-        await createServiceOrder(form)
+        await createServiceOrder(payload)
       }
       setModal(false)
       fetchOrders()
@@ -233,7 +268,8 @@ export default function ServiceOrderListPage() {
                 <th className="text-left px-4 py-3 font-medium text-foreground">#</th>
                 <th className="text-left px-4 py-3 font-medium text-foreground">Cliente</th>
                 <th className="text-left px-4 py-3 font-medium text-foreground">Equipo</th>
-                <th className="text-left px-4 py-3 font-medium text-foreground">Servicio</th>
+                <th className="text-left px-4 py-3 font-medium text-foreground">Servicios</th>
+                <th className="text-right px-4 py-3 font-medium text-foreground">Total</th>
                 <th className="text-left px-4 py-3 font-medium text-foreground">Estado</th>
                 <th className="text-left px-4 py-3 font-medium text-foreground">Prioridad</th>
                 <th className="text-left px-4 py-3 font-medium text-foreground">Ingreso</th>
@@ -246,7 +282,12 @@ export default function ServiceOrderListPage() {
                   <td className="px-4 py-3 text-foreground font-mono">#{order.id}</td>
                   <td className="px-4 py-3 text-foreground">{order.client?.nombre} {order.client?.apellido}</td>
                   <td className="px-4 py-3 text-muted-foreground">{order.device?.tipo_equipo} - {order.device?.marca} {order.device?.modelo}</td>
-                  <td className="px-4 py-3 text-muted-foreground">{order.serviceType?.nombre}</td>
+                  <td className="px-4 py-3 text-muted-foreground">
+                    {(order.items || []).map((item, i) => (
+                      <span key={i} className="inline-block mr-2">{item.serviceType?.nombre}{i < order.items.length - 1 ? ',' : ''}</span>
+                    ))}
+                  </td>
+                  <td className="px-4 py-3 text-right text-foreground font-mono">Bs. {Number(order.costo_total || 0).toLocaleString('es-BO', { minimumFractionDigits: 2 })}</td>
                   <td className="px-4 py-3">
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${ESTADO_COLOR[order.estado] || 'bg-muted text-muted-foreground'}`}>
                       {order.estado}
@@ -262,6 +303,7 @@ export default function ServiceOrderListPage() {
                     {order.estado !== 'Entregado' && (
                       <button onClick={() => openStatusModal(order)} className="px-3 py-1 bg-success/10 text-success rounded-lg text-xs font-medium hover:bg-success/20 transition-colors">Avanzar</button>
                     )}
+                    <button onClick={() => navigate(`/pagos?orderId=${order.id}`)} className="px-3 py-1 bg-blue-100 text-blue-800 rounded-lg text-xs font-medium hover:bg-blue-200 transition-colors">Pagos</button>
                     <button onClick={() => openEdit(order.id)} className="px-3 py-1 bg-primary/10 text-primary-600 rounded-lg text-xs font-medium hover:bg-primary/20 transition-colors">Editar</button>
                     <button onClick={() => handleDelete(order.id, String(order.id))} className="px-3 py-1 bg-error/10 text-error rounded-lg text-xs font-medium hover:bg-error/20 transition-colors">Eliminar</button>
                   </td>
@@ -299,17 +341,44 @@ export default function ServiceOrderListPage() {
             </select>
             {formErrors.device_id && <p className="mt-1 text-xs text-error">{formErrors.device_id}</p>}
           </div>
+
           <div>
-            <label className="block text-sm font-medium text-foreground mb-1">Tipo de Servicio</label>
-            <select name="service_type_id" value={form.service_type_id} onChange={handleChange} required
-              className={`w-full px-3 py-2 border rounded-lg text-sm bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 ${formErrors.service_type_id ? 'border-error' : 'border-input'}`}>
-              <option value={0}>Seleccionar tipo</option>
-              {serviceTypes.map(st => (
-                <option key={st.id} value={st.id}>{st.nombre}</option>
-              ))}
-            </select>
-            {formErrors.service_type_id && <p className="mt-1 text-xs text-error">{formErrors.service_type_id}</p>}
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-sm font-medium text-foreground">Servicios</label>
+              <button type="button" onClick={addItem} className="text-xs text-primary hover:underline">+ Agregar servicio</button>
+            </div>
+            {form.items.map((item, idx) => (
+              <div key={idx} className="p-3 bg-muted/20 rounded-lg mb-2 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-muted-foreground font-medium">Servicio #{idx + 1}</span>
+                  {form.items.length > 1 && (
+                    <button type="button" onClick={() => removeItem(idx)} className="text-xs text-error hover:underline">Quitar</button>
+                  )}
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <select name={`items.${idx}.service_type_id`} value={item.service_type_id} onChange={handleChange} required
+                      className="w-full px-3 py-2 border border-input rounded-lg text-sm bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50">
+                      <option value={0}>Seleccionar tipo</option>
+                      {serviceTypes.map(st => (
+                        <option key={st.id} value={st.id}>{st.nombre}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <input type="number" step="0.01" min="0" name={`items.${idx}.precio`} value={item.precio} onChange={handleChange} placeholder="Precio Bs."
+                      className="w-full px-3 py-2 border border-input rounded-lg text-sm bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50" />
+                  </div>
+                </div>
+                <div>
+                  <input type="text" name={`items.${idx}.descripcion`} value={item.descripcion} onChange={handleChange} placeholder="Descripción (opcional)"
+                    className="w-full px-3 py-2 border border-input rounded-lg text-sm bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50" />
+                </div>
+              </div>
+            ))}
+            {formErrors['items'] && <p className="mt-1 text-xs text-error">{formErrors['items']}</p>}
           </div>
+
           <div>
             <label className="block text-sm font-medium text-foreground mb-1">Diagnóstico Inicial</label>
             <textarea name="diagnostico_inicial" value={form.diagnostico_inicial} onChange={handleChange} required rows={3}
@@ -357,6 +426,7 @@ export default function ServiceOrderListPage() {
             <textarea name="observaciones" value={form.observaciones} onChange={handleChange} rows={2}
               className="w-full px-3 py-2 border border-input rounded-lg text-sm bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50" />
           </div>
+
           <div className="flex gap-3 pt-2">
             <button type="submit" disabled={saving} className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:bg-primary-700 disabled:opacity-50 transition-colors">
               {saving ? 'Guardando...' : editingId ? 'Actualizar' : 'Crear'}

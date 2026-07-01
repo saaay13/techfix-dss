@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react'
-import { getPayments, createPayment } from '../services/payments'
-import { getServiceOrders } from '../services/orders'
+import { useParams } from 'react-router-dom'
+import { getPayments, createPayment } from '../../services/payments'
+import { getServiceOrders } from '../../services/orders'
 
 const METODOS = ['Efectivo', 'Transferencia', 'Tarjeta', 'QR']
 
 export default function PaymentForm() {
+  const { orderId } = useParams()
   const [orders, setOrders] = useState<any[]>([])
-  const [selectedOrderId, setSelectedOrderId] = useState('')
+  const [selectedOrderId, setSelectedOrderId] = useState(orderId || '')
   const [selectedOrder, setSelectedOrder] = useState<any>(null)
   const [monto, setMonto] = useState('')
   const [metodoPago, setMetodoPago] = useState('Efectivo')
@@ -39,8 +41,8 @@ export default function PaymentForm() {
     }
   }, [selectedOrderId, orders])
 
-  const formatMoney = (value: number) =>
-    value.toLocaleString('es-BO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  const formatMoney = (value: number | null | undefined) =>
+    (value ?? 0).toLocaleString('es-BO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -97,22 +99,29 @@ export default function PaymentForm() {
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="bg-card border border-border rounded-xl shadow-sm p-6 space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-foreground mb-1">Orden de Servicio <span className="text-destructive">*</span></label>
-            <select
-              value={selectedOrderId}
-              onChange={e => setSelectedOrderId(e.target.value)}
-              className="w-full px-3 py-2 border border-input rounded-lg text-sm bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-            >
-              <option value="">-- Seleccione una orden --</option>
-              {orders.map(o => (
-                <option key={o.id} value={o.id}>
-                  #{o.id} - {o.client?.nombre} {o.client?.apellido} - {o.estado}
-                </option>
-              ))}
-            </select>
-            {errors.service_order_id && <p className="mt-1 text-xs text-destructive">{errors.service_order_id}</p>}
-          </div>
+          {orderId ? (
+            <div className="p-3 bg-muted/30 rounded-lg text-sm">
+              <span className="text-muted-foreground">Orden de Servicio: </span>
+              <span className="font-medium text-foreground">#{selectedOrderId}</span>
+            </div>
+          ) : (
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-1">Orden de Servicio <span className="text-destructive">*</span></label>
+              <select
+                value={selectedOrderId}
+                onChange={e => setSelectedOrderId(e.target.value)}
+                className="w-full px-3 py-2 border border-input rounded-lg text-sm bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+              >
+                <option value="">-- Seleccione una orden --</option>
+                {orders.map(o => (
+                  <option key={o.id} value={o.id}>
+                    #{o.id} - {o.client?.nombre} {o.client?.apellido} - {o.estado}
+                  </option>
+                ))}
+              </select>
+              {errors.service_order_id && <p className="mt-1 text-xs text-destructive">{errors.service_order_id}</p>}
+            </div>
+          )}
 
           {selectedOrder && (
             <div className="p-4 bg-muted/30 rounded-lg space-y-2">
