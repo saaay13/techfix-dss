@@ -15,6 +15,7 @@ import PlaceholderPage from './pages/PlaceholderPage'
 import CriticalStockPage from './pages/CriticalStockPage'
 import ActivityListPage from './pages/ActivityListPage'
 import ActivityFormPage from './pages/ActivityFormPage'
+import PaymentForm from './pages/payments/PaymentForm'
 
 export default function App() {
   return (
@@ -36,6 +37,7 @@ export default function App() {
           <Route path="/tipos-servicio" element={<PrivateRoute><ProtectedRoute roles={['Administrador']}><Layout><ServiceTypeListPage /></Layout></ProtectedRoute></PrivateRoute>} />
           <Route path="/reportes/financieros" element={<PrivateRoute><ProtectedRoute roles={['Administrador']}><Layout><PlaceholderPage title="Reportes Financieros" /></Layout></ProtectedRoute></PrivateRoute>} />
           <Route path="/dashboard/ingresos" element={<PrivateRoute><ProtectedRoute roles={['Administrador']}><Layout><PlaceholderPage title="Dashboard de Ingresos" /></Layout></ProtectedRoute></PrivateRoute>} />
+          <Route path="/pagos/nuevo" element={<PrivateRoute><ProtectedRoute roles={['Administrador']}><Layout><PaymentForm /></Layout></ProtectedRoute></PrivateRoute>} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </AuthProvider>

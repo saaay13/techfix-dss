@@ -58,4 +58,9 @@ class ServiceOrder extends Model
     {
         return $this->hasMany(StatusHistory::class);
     }
+
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
+    }
 }

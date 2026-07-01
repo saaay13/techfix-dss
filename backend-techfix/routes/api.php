@@ -11,6 +11,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ServiceOrderController;
 use App\Http\Controllers\ServiceTypeController;
 use App\Http\Controllers\ActivityController;
+use App\Http\Controllers\PaymentController;
 
 Route::get('/ping', function () {
     return response()->json([
@@ -43,6 +44,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('service-types', [ServiceTypeController::class, 'store']);
         Route::put('service-types/{service_type}', [ServiceTypeController::class, 'update']);
         Route::delete('service-types/{service_type}', [ServiceTypeController::class, 'destroy']);
+        Route::apiResource('payments', PaymentController::class)->only(['index', 'store', 'show']);
+        Route::get('service-orders/{service_order}/payments', [PaymentController::class, 'byOrder']);
         Route::get('/reports/financial', function () {
             return response()->json(['message' => 'Reportes financieros']);
         });
