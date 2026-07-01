@@ -51,10 +51,12 @@ export default function ActivityFormPage() {
   }
 
   return (
-    <div className="max-w-lg mx-auto mt-10 p-6 bg-card border border-border rounded-xl shadow-sm">
-      <h2 className="text-2xl font-semibold text-foreground mb-6">
-        {isEdit ? 'Editar Actividad' : 'Nueva Actividad'}
-      </h2>
+    <div className="max-w-lg mx-auto p-6">
+      <div className="mb-6">
+        <h2 className="text-2xl font-semibold text-foreground">{isEdit ? 'Editar Actividad' : 'Nueva Actividad'}</h2>
+        <p className="text-sm text-muted-foreground mt-1">{isEdit ? 'Modifica los datos de la actividad' : 'Registra una nueva actividad'}</p>
+      </div>
+      <div className="bg-card border border-border rounded-xl shadow-sm p-6">
 
       {errors.general && (
         <div className="mb-4 p-3 bg-destructive/10 border border-destructive/30 text-destructive rounded-lg text-sm">{errors.general}</div>
@@ -102,6 +104,7 @@ export default function ActivityFormPage() {
           </button>
         </div>
       </form>
+      </div>
     </div>
   )
 }

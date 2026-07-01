@@ -23,7 +23,7 @@ export default function CriticalStockPage() {
   }, [])
 
   return (
-    <div className="max-w-5xl mx-auto p-6">
+    <div className="max-w-5xl mx-auto mt-10 p-6">
       <div className="flex items-center gap-3 mb-6">
         <div className="w-3 h-3 bg-destructive rounded-full animate-pulse" />
         <h2 className="text-2xl font-semibold text-foreground">Alertas de Stock Crítico</h2>

@@ -39,7 +39,7 @@ export default function ActivityListPage() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto p-6">
+    <div className="max-w-5xl mx-auto mt-10 p-6">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-semibold text-foreground">Gestión de Actividades</h2>
         <button
@@ -73,10 +73,10 @@ export default function ActivityListPage() {
                 <tr key={activity.id} className="border-b border-border last:border-0 hover:bg-muted/30 transition-colors">
                   <td className="px-4 py-3 text-foreground font-medium">{activity.nombre}</td>
                   <td className="px-4 py-3">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                       activity.activo
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-red-100 text-red-700'
+                        ? 'bg-success/10 text-success'
+                        : 'bg-destructive/10 text-destructive'
                     }`}>
                       {activity.activo ? 'Activo' : 'Inactivo'}
                     </span>
