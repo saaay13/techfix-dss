@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '../context/AuthContext'
-import { getCriticalStock } from '../services/api'
+import { getCriticalStock, getDashboard } from '../services/api'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
 
 interface CriticalComponent {
@@ -37,20 +37,15 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true)
 
   const fetchData = () => {
-    setLoading(true)
-    const token = localStorage.getItem('token')
-    const headers: Record<string, string> = { 'Accept': 'application/json' }
-    if (token) headers['Authorization'] = `Bearer ${token}`
-
     Promise.all([
-      fetch('http://127.0.0.1:8000/api/dashboard', { headers }).then(r => r.json()),
+      getDashboard(),
       getCriticalStock(),
     ])
       .then(([dashData, criticalData]) => {
         setDashboard(dashData)
         setCriticalComponents(criticalData)
       })
-      .catch(() => {})
+      .catch(console.error)
       .finally(() => setLoading(false))
   }
 
@@ -79,7 +74,7 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         <KpiCard title="Órdenes Pendientes" value={dashboard?.pending_orders_count ?? 0} color="text-amber-600" />
         <KpiCard title="Stock Crítico" value={dashboard?.critical_stock ?? 0} color="text-destructive" />
-        <KpiCard title="Ingresos (12m)" value={formatCurrency(dashboard?.monthly_income?.reduce((s, m) => s + m.total, 0) ?? 0)} color="text-green-600" />
+        <KpiCard title="Ingresos (12m)" value={formatCurrency(dashboard?.monthly_income?.reduce((s, m) => s + Number(m.total), 0) ?? 0)} color="text-green-600" />
         <KpiCard title="Servicios Top" value={dashboard?.top_services?.[0]?.nombre ?? '-'} color="text-primary" />
         <KpiCard title="Equipo con Fallas" value={dashboard?.top_failed_devices?.[0]?.nombre ?? '-'} color="text-orange-600" />
       </div>
