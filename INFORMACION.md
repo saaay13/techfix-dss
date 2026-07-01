@@ -343,7 +343,6 @@ Como desarrollador quiero pasar una checklist de verificación final antes de da
 | Carpeta/Archivo | Descripción |
 |----------------|-------------|
 | `README.md` | Este archivo |
-| `contexto.md` | Documentación completa del proyecto |
 | `modelo/` | Diagramas UML y modelo de datos |
 | `.gitignore` | Archivos ignorados por Git |
 
