@@ -93,7 +93,7 @@ export default function ServiceTypeListPage() {
   }
 
   return (
-    <div className="p-6">
+    <div className="max-w-5xl mx-auto mt-10 p-6">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-foreground">Tipos de Servicio</h1>
         <button onClick={openCreate} className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors">
@@ -122,7 +122,7 @@ export default function ServiceTypeListPage() {
                 <td className="p-3 text-right text-foreground">Bs. {Number(t.precio).toFixed(2)}</td>
                 <td className="p-3 text-center">
                   <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                    t.activo ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                      t.activo ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive'
                   }`}>
                     {t.activo ? 'Activo' : 'Inactivo'}
                   </span>
