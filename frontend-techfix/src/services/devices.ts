@@ -6,6 +6,7 @@ export const getDevice = (id: number) => api.get(`/devices/${id}`).then(r => r.d
 export const createDevice = (data: Record<string, unknown>) => api.post('/devices', data).then(r => r.data)
 export const updateDevice = (id: number, data: Record<string, unknown>) => api.put(`/devices/${id}`, data).then(r => r.data)
 export const deleteDevice = (id: number) => api.delete(`/devices/${id}`).then(r => r.data)
+export const getDeviceServiceHistory = (deviceId: number) => api.get(`/devices/${deviceId}/service-history`).then(r => r.data)
 
 export const getDeviceTypes = () => [
   'PC', 'Laptop', 'PlayStation', 'Xbox', 'Nintendo', 'Celular', 'Electrónica general',

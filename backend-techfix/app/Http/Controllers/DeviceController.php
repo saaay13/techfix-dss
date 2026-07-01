@@ -70,4 +70,14 @@ class DeviceController extends Controller
             'message' => 'Equipo desactivado exitosamente.',
         ]);
     }
+
+    public function serviceHistory(Device $device)
+    {
+        $orders = $device->serviceOrders()
+            ->with('serviceType')
+            ->orderBy('fecha_ingreso', 'desc')
+            ->get();
+
+        return response()->json($orders);
+    }
 }

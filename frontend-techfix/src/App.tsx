@@ -16,6 +16,7 @@ import CriticalStockPage from './pages/CriticalStockPage'
 import ActivityListPage from './pages/ActivityListPage'
 import ActivityFormPage from './pages/ActivityFormPage'
 import PaymentForm from './pages/payments/PaymentForm'
+import DeviceServiceHistoryPage from './pages/devices/DeviceServiceHistoryPage'
 
 export default function App() {
   return (
@@ -27,6 +28,7 @@ export default function App() {
 
           <Route path="/clientes" element={<PrivateRoute><Layout><ClientListPage /></Layout></PrivateRoute>} />
           <Route path="/equipos" element={<PrivateRoute><Layout><DeviceListPage /></Layout></PrivateRoute>} />
+          <Route path="/equipos/:id/historial" element={<PrivateRoute><Layout><DeviceServiceHistoryPage /></Layout></PrivateRoute>} />
           <Route path="/ordenes" element={<PrivateRoute><Layout><ServiceOrderListPage /></Layout></PrivateRoute>} />
           <Route path="/componentes" element={<PrivateRoute><Layout><ComponentListPage /></Layout></PrivateRoute>} />
           <Route path="/alertas-stock" element={<PrivateRoute><Layout><CriticalStockPage /></Layout></PrivateRoute>} />

@@ -1,4 +1,5 @@
 import { FormEvent, useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { getDevices, getDevice, createDevice, updateDevice, deleteDevice, getDeviceTypes, getPhysicalStates } from '../../services/devices'
 import { getClients } from '../../services/clients'
 import Modal from '../../components/Modal'
@@ -24,6 +25,7 @@ interface Client {
 const emptyForm = { tipo_equipo: '', marca: '', modelo: '', numero_serie: '', estado_fisico: '', client_id: 0 }
 
 export default function DeviceListPage() {
+  const navigate = useNavigate()
   const [devices, setDevices] = useState<Device[] | null>(null)
   const [clients, setClients] = useState<Client[]>([])
   const [error, setError] = useState('')
@@ -172,6 +174,7 @@ export default function DeviceListPage() {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-right space-x-2">
+                    <button onClick={() => navigate(`/equipos/${device.id}/historial`)} className="px-3 py-1 bg-purple-100 text-purple-800 rounded-lg text-xs font-medium hover:bg-purple-200 transition-colors">Historial</button>
                     <button onClick={() => openEdit(device.id)} className="px-3 py-1 bg-primary/10 text-primary-600 rounded-lg text-xs font-medium hover:bg-primary/20 transition-colors">Editar</button>
                     {device.activo && (
                       <button onClick={() => handleDelete(device.id, `${device.marca} ${device.modelo}`)} className="px-3 py-1 bg-error/10 text-error rounded-lg text-xs font-medium hover:bg-error/20 transition-colors">Desactivar</button>
