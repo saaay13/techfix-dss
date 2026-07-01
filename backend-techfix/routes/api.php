@@ -32,6 +32,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('service-orders', ServiceOrderController::class);
     Route::put('service-orders/{service_order}/status', [ServiceOrderController::class, 'updateStatus']);
     Route::apiResource('categories', CategoryController::class)->only(['index', 'show']);
+    Route::get('/components/critical-stock', [ComponentController::class, 'criticalStock']);
     Route::apiResource('components', ComponentController::class);
 
     Route::middleware('role:Administrador')->group(function () {

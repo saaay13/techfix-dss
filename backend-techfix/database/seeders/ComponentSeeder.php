@@ -65,6 +65,28 @@ class ComponentSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+            [
+                'nombre' => 'Ventilador CPU Socket 1151',
+                'descripcion' => 'Ventilador de repuesto para procesador Intel',
+                'cantidad' => 1,
+                'stock_minimo' => 3,
+                'precio_unitario' => 85.00,
+                'activo' => true,
+                'category_id' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'nombre' => 'Pasta Térmica 5g',
+                'descripcion' => 'Pasta térmica para procesador, tubo 5 gramos',
+                'cantidad' => 0,
+                'stock_minimo' => 5,
+                'precio_unitario' => 25.00,
+                'activo' => true,
+                'category_id' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
         ]);
     }
 }

@@ -11,6 +11,7 @@ import ServiceOrderListPage from './pages/orders/ServiceOrderListPage'
 import ComponentListPage from './pages/inventory/ComponentListPage'
 import UserListPage from './pages/users/UserListPage'
 import PlaceholderPage from './pages/PlaceholderPage'
+import CriticalStockPage from './pages/CriticalStockPage'
 
 export default function App() {
   return (
@@ -24,6 +25,7 @@ export default function App() {
           <Route path="/equipos" element={<PrivateRoute><Layout><DeviceListPage /></Layout></PrivateRoute>} />
           <Route path="/ordenes" element={<PrivateRoute><Layout><ServiceOrderListPage /></Layout></PrivateRoute>} />
           <Route path="/componentes" element={<PrivateRoute><Layout><ComponentListPage /></Layout></PrivateRoute>} />
+          <Route path="/alertas-stock" element={<PrivateRoute><Layout><CriticalStockPage /></Layout></PrivateRoute>} />
           <Route path="/usuarios" element={<PrivateRoute><ProtectedRoute roles={['Administrador']}><Layout><UserListPage /></Layout></ProtectedRoute></PrivateRoute>} />
           <Route path="/reportes/financieros" element={<PrivateRoute><ProtectedRoute roles={['Administrador']}><Layout><PlaceholderPage title="Reportes Financieros" /></Layout></ProtectedRoute></PrivateRoute>} />
           <Route path="/dashboard/ingresos" element={<PrivateRoute><ProtectedRoute roles={['Administrador']}><Layout><PlaceholderPage title="Dashboard de Ingresos" /></Layout></ProtectedRoute></PrivateRoute>} />

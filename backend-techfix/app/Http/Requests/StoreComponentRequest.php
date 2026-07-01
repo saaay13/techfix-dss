@@ -19,6 +19,7 @@ class StoreComponentRequest extends FormRequest
             'cantidad' => ['required', 'integer', 'min:1'],
             'precio_unitario' => ['required', 'numeric', 'min:0'],
             'category_id' => ['required', 'integer', 'exists:categories,id'],
+            'stock_minimo' => ['nullable', 'integer', 'min:0'],
         ];
     }
 
