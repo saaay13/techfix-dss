@@ -81,140 +81,123 @@ export default function PaymentForm() {
   }
 
   return (
-    <div style={{ maxWidth: 700, margin: '0 auto', padding: 24 }}>
-      <h2 style={{ marginBottom: 24 }}>Registrar Pago</h2>
+    <div className="max-w-3xl mx-auto p-6">
+      <div className="mb-6">
+        <h2 className="text-2xl font-semibold text-foreground">Registrar Pago</h2>
+        <p className="text-sm text-muted-foreground mt-1">Asocia un pago a una orden de servicio</p>
+      </div>
 
       {success && (
-        <div style={{ background: '#d4edda', color: '#155724', padding: 12, borderRadius: 6, marginBottom: 16 }}>
-          {success}
-        </div>
+        <div className="mb-4 p-3 bg-success/10 border border-success/30 text-success rounded-lg text-sm">{success}</div>
       )}
 
       {errors.general && (
-        <div style={{ background: '#f8d7da', color: '#721c24', padding: 12, borderRadius: 6, marginBottom: 16 }}>
-          {errors.general}
-        </div>
+        <div className="mb-4 p-3 bg-destructive/10 border border-destructive/30 text-destructive rounded-lg text-sm">{errors.general}</div>
       )}
 
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: 16 }}>
-          <label>Orden de Servicio <span style={{ color: 'red' }}>*</span></label>
-          <select
-            value={selectedOrderId}
-            onChange={e => setSelectedOrderId(e.target.value)}
-            style={{ display: 'block', width: '100%', padding: 8, marginTop: 4 }}
-          >
-            <option value="">-- Seleccione una orden --</option>
-            {orders.map(o => (
-              <option key={o.id} value={o.id}>
-                #{o.id} - {o.client?.nombre} {o.client?.apellido} - {o.estado}
-              </option>
-            ))}
-          </select>
-          {errors.service_order_id && <small style={{ color: 'red' }}>{errors.service_order_id}</small>}
-        </div>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="bg-card border border-border rounded-xl shadow-sm p-6 space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-1">Orden de Servicio <span className="text-destructive">*</span></label>
+            <select
+              value={selectedOrderId}
+              onChange={e => setSelectedOrderId(e.target.value)}
+              className="w-full px-3 py-2 border border-input rounded-lg text-sm bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+            >
+              <option value="">-- Seleccione una orden --</option>
+              {orders.map(o => (
+                <option key={o.id} value={o.id}>
+                  #{o.id} - {o.client?.nombre} {o.client?.apellido} - {o.estado}
+                </option>
+              ))}
+            </select>
+            {errors.service_order_id && <p className="mt-1 text-xs text-destructive">{errors.service_order_id}</p>}
+          </div>
 
-        {selectedOrder && (
-          <div style={{
-            background: '#f0f4f8',
-            padding: 16,
-            borderRadius: 8,
-            marginBottom: 16,
-          }}>
-            <h4 style={{ margin: '0 0 8px', fontSize: 14, color: '#555' }}>Resumen de Orden #{selectedOrder.id}</h4>
-            <div style={{ fontSize: 13, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4 }}>
-              <span>Cliente: <strong>{selectedOrder.client?.nombre} {selectedOrder.client?.apellido}</strong></span>
-              <span>Estado: <strong>{selectedOrder.estado}</strong></span>
-              <span>Prioridad: <strong>{selectedOrder.prioridad}</strong></span>
-              <span>Costo Total: <strong>Bs. {formatMoney(Number(selectedOrder.costo_total))}</strong></span>
-              <span style={{ color: '#28a745' }}>Total Pagado: <strong>Bs. {formatMoney(selectedOrder.total_pagado || 0)}</strong></span>
-              <span style={{ color: selectedOrder.saldo_restante > 0 ? '#dc3545' : '#28a745' }}>
-                Saldo Restante: <strong>Bs. {formatMoney(selectedOrder.saldo_restante)}</strong>
-              </span>
-            </div>
-
-            {selectedOrder.payments && selectedOrder.payments.length > 0 && (
-              <div style={{ marginTop: 12 }}>
-                <h5 style={{ margin: '0 0 4px', fontSize: 12, color: '#888' }}>Historial de Pagos</h5>
-                <table style={{ width: '100%', fontSize: 12, borderCollapse: 'collapse' }}>
-                  <thead>
-                    <tr style={{ background: '#e9ecef' }}>
-                      <th style={{ padding: '4px 8px', textAlign: 'left' }}>Fecha</th>
-                      <th style={{ padding: '4px 8px', textAlign: 'left' }}>Método</th>
-                      <th style={{ padding: '4px 8px', textAlign: 'right' }}>Monto</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {selectedOrder.payments.map((p: any) => (
-                      <tr key={p.id}>
-                        <td style={{ padding: '4px 8px' }}>{p.fecha}</td>
-                        <td style={{ padding: '4px 8px' }}>{p.metodo_pago}</td>
-                        <td style={{ padding: '4px 8px', textAlign: 'right' }}>Bs. {formatMoney(Number(p.monto))}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+          {selectedOrder && (
+            <div className="p-4 bg-muted/30 rounded-lg space-y-2">
+              <h4 className="text-sm font-semibold text-foreground">Resumen de Orden #{selectedOrder.id}</h4>
+              <div className="grid grid-cols-2 gap-2 text-sm">
+                <span className="text-muted-foreground">Cliente: <span className="font-medium text-foreground">{selectedOrder.client?.nombre} {selectedOrder.client?.apellido}</span></span>
+                <span className="text-muted-foreground">Estado: <span className="font-medium text-foreground">{selectedOrder.estado}</span></span>
+                <span className="text-muted-foreground">Prioridad: <span className="font-medium text-foreground">{selectedOrder.prioridad}</span></span>
+                <span className="text-muted-foreground">Costo Total: <span className="font-medium text-foreground">Bs. {formatMoney(Number(selectedOrder.costo_total))}</span></span>
+                <span className="text-success font-medium">Total Pagado: Bs. {formatMoney(selectedOrder.total_pagado || 0)}</span>
+                <span className={selectedOrder.saldo_restante > 0 ? 'text-destructive font-medium' : 'text-success font-medium'}>
+                  Saldo Restante: Bs. {formatMoney(selectedOrder.saldo_restante)}
+                </span>
               </div>
-            )}
+
+              {selectedOrder.payments && selectedOrder.payments.length > 0 && (
+                <div className="mt-2">
+                  <h5 className="text-xs font-medium text-muted-foreground mb-1">Historial de Pagos</h5>
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="border-b border-border">
+                        <th className="text-left py-1 pr-2 text-muted-foreground font-medium">Fecha</th>
+                        <th className="text-left py-1 px-2 text-muted-foreground font-medium">Método</th>
+                        <th className="text-right py-1 pl-2 text-muted-foreground font-medium">Monto</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {selectedOrder.payments.map((p: any) => (
+                        <tr key={p.id} className="border-b border-border/50">
+                          <td className="py-1 pr-2 text-foreground">{p.fecha}</td>
+                          <td className="py-1 px-2 text-foreground">{p.metodo_pago}</td>
+                          <td className="py-1 pl-2 text-right text-foreground">Bs. {formatMoney(Number(p.monto))}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          )}
+
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-1">Monto (Bs.) <span className="text-destructive">*</span></label>
+            <input
+              type="number"
+              step="0.01"
+              min="0.01"
+              value={monto}
+              onChange={e => setMonto(e.target.value)}
+              placeholder="0.00"
+              className="w-full px-3 py-2 border border-input rounded-lg text-sm bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+            />
+            {errors.monto && <p className="mt-1 text-xs text-destructive">{errors.monto}</p>}
           </div>
-        )}
 
-        <div style={{ marginBottom: 16 }}>
-          <label>Monto (Bs.) <span style={{ color: 'red' }}>*</span></label>
-          <input
-            type="number"
-            step="0.01"
-            min="0.01"
-            value={monto}
-            onChange={e => setMonto(e.target.value)}
-            placeholder="0.00"
-            style={{ display: 'block', width: '100%', padding: 8, marginTop: 4 }}
-          />
-          {errors.monto && <small style={{ color: 'red' }}>{errors.monto}</small>}
-        </div>
-
-        <div style={{ marginBottom: 24 }}>
-          <label>Método de Pago <span style={{ color: 'red' }}>*</span></label>
-          <select
-            value={metodoPago}
-            onChange={e => setMetodoPago(e.target.value)}
-            style={{ display: 'block', width: '100%', padding: 8, marginTop: 4 }}
-          >
-            {METODOS.map(m => (
-              <option key={m} value={m}>{m}</option>
-            ))}
-          </select>
-          {errors.metodo_pago && <small style={{ color: 'red' }}>{errors.metodo_pago}</small>}
-        </div>
-
-        {selectedOrder && selectedOrder.saldo_restante <= 0 && (
-          <div style={{
-            background: '#fff3cd',
-            color: '#856404',
-            padding: 12,
-            borderRadius: 6,
-            marginBottom: 16,
-            fontSize: 14,
-          }}>
-            Esta orden ya está totalmente pagada.
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-1">Método de Pago <span className="text-destructive">*</span></label>
+            <select
+              value={metodoPago}
+              onChange={e => setMetodoPago(e.target.value)}
+              className="w-full px-3 py-2 border border-input rounded-lg text-sm bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+            >
+              {METODOS.map(m => (
+                <option key={m} value={m}>{m}</option>
+              ))}
+            </select>
+            {errors.metodo_pago && <p className="mt-1 text-xs text-destructive">{errors.metodo_pago}</p>}
           </div>
-        )}
 
-        <button
-          type="submit"
-          disabled={loading || (selectedOrder?.saldo_restante <= 0)}
-          style={{
-            padding: '10px 24px',
-            background: '#007bff',
-            color: 'white',
-            border: 'none',
-            borderRadius: 6,
-            cursor: (loading || (selectedOrder?.saldo_restante <= 0)) ? 'not-allowed' : 'pointer',
-            opacity: (loading || (selectedOrder?.saldo_restante <= 0)) ? 0.7 : 1,
-          }}
-        >
-          {loading ? 'Registrando...' : 'Registrar Pago'}
-        </button>
+          {selectedOrder && selectedOrder.saldo_restante <= 0 && (
+            <div className="p-3 bg-warning/10 border border-warning/30 text-warning rounded-lg text-sm">
+              Esta orden ya está totalmente pagada.
+            </div>
+          )}
+
+          <div className="flex gap-3 pt-2">
+            <button
+              type="submit"
+              disabled={loading || (selectedOrder?.saldo_restante <= 0)}
+              className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:bg-primary/90 disabled:opacity-50 transition-colors"
+            >
+              {loading ? 'Registrando...' : 'Registrar Pago'}
+            </button>
+          </div>
+        </div>
       </form>
     </div>
   )
