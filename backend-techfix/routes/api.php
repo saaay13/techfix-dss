@@ -12,6 +12,7 @@ use App\Http\Controllers\ServiceOrderController;
 use App\Http\Controllers\ServiceTypeController;
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ComponentSwapController;
 
 Route::get('/ping', function () {
     return response()->json([
@@ -36,6 +37,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('categories', CategoryController::class)->only(['index', 'show']);
     Route::get('/components/critical-stock', [ComponentController::class, 'criticalStock']);
     Route::apiResource('components', ComponentController::class);
+    Route::apiResource('component-swaps', ComponentSwapController::class)->only(['index', 'store', 'show']);
 
     Route::middleware('role:Administrador')->group(function () {
         Route::apiResource('activities', ActivityController::class);

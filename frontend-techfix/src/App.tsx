@@ -11,6 +11,7 @@ import ServiceOrderListPage from './pages/orders/ServiceOrderListPage'
 import ComponentListPage from './pages/inventory/ComponentListPage'
 import UserListPage from './pages/users/UserListPage'
 import ServiceTypeListPage from './pages/service-types/ServiceTypeListPage'
+import ComponentSwapForm from './pages/component-swaps/ComponentSwapForm'
 import PlaceholderPage from './pages/PlaceholderPage'
 import CriticalStockPage from './pages/CriticalStockPage'
 import ActivityListPage from './pages/ActivityListPage'
@@ -36,6 +37,7 @@ export default function App() {
           <Route path="/actividades/:id/editar" element={<PrivateRoute><ProtectedRoute roles={['Administrador']}><Layout><ActivityFormPage /></Layout></ProtectedRoute></PrivateRoute>} />
           <Route path="/usuarios" element={<PrivateRoute><ProtectedRoute roles={['Administrador']}><Layout><UserListPage /></Layout></ProtectedRoute></PrivateRoute>} />
           <Route path="/tipos-servicio" element={<PrivateRoute><ProtectedRoute roles={['Administrador']}><Layout><ServiceTypeListPage /></Layout></ProtectedRoute></PrivateRoute>} />
+          <Route path="/cambios-componentes/nuevo" element={<PrivateRoute><Layout><ComponentSwapForm /></Layout></PrivateRoute>} />
           <Route path="/reportes/financieros" element={<PrivateRoute><ProtectedRoute roles={['Administrador']}><Layout><PlaceholderPage title="Reportes Financieros" /></Layout></ProtectedRoute></PrivateRoute>} />
           <Route path="/dashboard/ingresos" element={<PrivateRoute><ProtectedRoute roles={['Administrador']}><Layout><PlaceholderPage title="Dashboard de Ingresos" /></Layout></ProtectedRoute></PrivateRoute>} />
           <Route path="/pagos" element={<PrivateRoute><ProtectedRoute roles={['Administrador']}><Layout><PaymentListPage /></Layout></ProtectedRoute></PrivateRoute>} />

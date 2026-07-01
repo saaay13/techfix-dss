@@ -12,6 +12,7 @@ export default function Sidebar() {
     { label: 'Equipos', path: '/equipos' },
     { label: 'Órdenes', path: '/ordenes' },
     { label: 'Inventario', path: '/componentes' },
+    { label: 'Cambios Componentes', path: '/cambios-componentes/nuevo' },
     { label: 'Alertas Stock', path: '/alertas-stock' },
     ...(isAdmin ? [{ label: 'Actividades', path: '/actividades' }, { label: 'Tipos Servicio', path: '/tipos-servicio' }, { label: 'Usuarios', path: '/usuarios' }, { label: 'Pagos', path: '/pagos' }] : []),
     { label: 'Reportes', path: '/reportes/financieros' },

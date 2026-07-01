@@ -20,7 +20,6 @@ class ServiceOrderFactory extends Factory
             'costo_total' => 0,
             'client_id' => \App\Models\Client::factory(),
             'device_id' => \App\Models\Device::factory(),
-            'service_type_id' => \App\Models\ServiceType::factory(),
             'user_id' => \App\Models\User::factory(),
         ];
     }
