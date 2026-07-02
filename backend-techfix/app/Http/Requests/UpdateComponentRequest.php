@@ -19,6 +19,7 @@ class UpdateComponentRequest extends FormRequest
             'cantidad' => ['sometimes', 'required', 'integer', 'min:1'],
             'precio_unitario' => ['sometimes', 'required', 'numeric', 'min:0'],
             'category_id' => ['sometimes', 'required', 'integer', 'exists:categories,id'],
+            'stock_minimo' => ['nullable', 'integer', 'min:0'],
         ];
     }
 

@@ -280,6 +280,52 @@ Como administrador quiero ver un dashboard con KPIs para tomar decisiones basada
   - Los datos se actualizan automáticamente al cambiar la información.
   - El dashboard usa gráficos (Chart.js o Recharts).
 
+### Épica E5 — Seguridad y Acceso al Sistema
+
+**HU-13: Iniciar sesión**
+Como usuario quiero iniciar sesión con correo y contraseña para acceder al sistema de forma segura.
+- Criterios de aceptación:
+  - El correo y la contraseña son obligatorios.
+  - Se valida que el usuario esté registrado y activo.
+  - El acceso se protege con autenticación (Sanctum).
+
+**HU-14: Gestionar usuarios**
+Como administrador quiero gestionar los usuarios del sistema para controlar quién tiene acceso.
+- Criterios de aceptación:
+  - CRUD completo de usuarios (nombre, correo, rol, activo).
+  - Solo un administrador puede crear, editar o desactivar usuarios.
+  - El correo debe ser único.
+
+**HU-15: Control de acceso por roles**
+Como administrador quiero asignar roles a los usuarios para restringir funcionalidades según su perfil.
+- Criterios de aceptación:
+  - Los roles disponibles son Administrador y Técnico.
+  - Solo los administradores pueden acceder a gestión de usuarios y configuración.
+  - El backend valida el rol en cada petición.
+
+### Épica E6 — Servicios y Actividades
+
+**HU-16: Gestionar tipos de servicio**
+Como administrador quiero gestionar los tipos de servicio para categorizar las órdenes.
+- Criterios de aceptación:
+  - CRUD completo de tipos de servicio (nombre, descripción, precio).
+  - Solo los tipos activos aparecen en los selectores de la orden.
+  - Borrado lógico (activo).
+
+**HU-17: Gestionar actividades**
+Como administrador quiero gestionar las actividades para tener un listado disponible al registrarlas en las órdenes.
+- Criterios de aceptación:
+  - CRUD completo de actividades (nombre).
+  - Borrado lógico (activo).
+  - El listado muestra solo actividades activas por defecto.
+--------------------------------------------------------------------------
+**HU-XX: Verificar Definition of Done al completar HU**
+Como desarrollador quiero pasar una checklist de verificación final antes de dar por terminada una historia de usuario para asegurar la calidad.
+- Criterios de aceptación:
+  - Existe un checklist estándar (criterios cumplidos, peer review, pruebas, sin conflictos, develop actualizado).
+  - Al marcar una HU como completada, se debe llenar la checklist.
+  - No se puede cerrar la HU sin todos los ítems marcados.
+
 ---
 
 ## Stack Tecnológico
@@ -297,7 +343,6 @@ Como administrador quiero ver un dashboard con KPIs para tomar decisiones basada
 | Carpeta/Archivo | Descripción |
 |----------------|-------------|
 | `README.md` | Este archivo |
-| `contexto.md` | Documentación completa del proyecto |
 | `modelo/` | Diagramas UML y modelo de datos |
 | `.gitignore` | Archivos ignorados por Git |
 

@@ -17,6 +17,9 @@ class DatabaseSeeder extends Seeder
             ServiceOrderSeeder::class,
             CategorySeeder::class,
             ComponentSeeder::class,
+            ActivitySeeder::class,
+            ActivityServiceTypeSeeder::class,
+            PaymentSeeder::class,
         ]);
     }
 }

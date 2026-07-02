@@ -10,7 +10,15 @@ import DeviceListPage from './pages/devices/DeviceListPage'
 import ServiceOrderListPage from './pages/orders/ServiceOrderListPage'
 import ComponentListPage from './pages/inventory/ComponentListPage'
 import UserListPage from './pages/users/UserListPage'
+import ServiceTypeListPage from './pages/service-types/ServiceTypeListPage'
 import PlaceholderPage from './pages/PlaceholderPage'
+import CriticalStockPage from './pages/CriticalStockPage'
+import ActivityListPage from './pages/ActivityListPage'
+import ActivityFormPage from './pages/ActivityFormPage'
+import PaymentListPage from './pages/payments/PaymentListPage'
+import PaymentForm from './pages/payments/PaymentForm'
+import DeviceServiceHistoryPage from './pages/devices/DeviceServiceHistoryPage'
+import OrderDetailPage from './pages/orders/OrderDetailPage'
 
 export default function App() {
   return (
@@ -22,11 +30,21 @@ export default function App() {
 
           <Route path="/clientes" element={<PrivateRoute><Layout><ClientListPage /></Layout></PrivateRoute>} />
           <Route path="/equipos" element={<PrivateRoute><Layout><DeviceListPage /></Layout></PrivateRoute>} />
+          <Route path="/equipos/:id/historial" element={<PrivateRoute><Layout><DeviceServiceHistoryPage /></Layout></PrivateRoute>} />
           <Route path="/ordenes" element={<PrivateRoute><Layout><ServiceOrderListPage /></Layout></PrivateRoute>} />
+          <Route path="/ordenes/:id" element={<PrivateRoute><Layout><OrderDetailPage /></Layout></PrivateRoute>} />
           <Route path="/componentes" element={<PrivateRoute><Layout><ComponentListPage /></Layout></PrivateRoute>} />
+          <Route path="/alertas-stock" element={<PrivateRoute><Layout><CriticalStockPage /></Layout></PrivateRoute>} />
+          <Route path="/actividades" element={<PrivateRoute><ProtectedRoute roles={['Administrador']}><Layout><ActivityListPage /></Layout></ProtectedRoute></PrivateRoute>} />
+          <Route path="/actividades/nueva" element={<PrivateRoute><ProtectedRoute roles={['Administrador']}><Layout><ActivityFormPage /></Layout></ProtectedRoute></PrivateRoute>} />
+          <Route path="/actividades/:id/editar" element={<PrivateRoute><ProtectedRoute roles={['Administrador']}><Layout><ActivityFormPage /></Layout></ProtectedRoute></PrivateRoute>} />
           <Route path="/usuarios" element={<PrivateRoute><ProtectedRoute roles={['Administrador']}><Layout><UserListPage /></Layout></ProtectedRoute></PrivateRoute>} />
+          <Route path="/tipos-servicio" element={<PrivateRoute><ProtectedRoute roles={['Administrador']}><Layout><ServiceTypeListPage /></Layout></ProtectedRoute></PrivateRoute>} />
           <Route path="/reportes/financieros" element={<PrivateRoute><ProtectedRoute roles={['Administrador']}><Layout><PlaceholderPage title="Reportes Financieros" /></Layout></ProtectedRoute></PrivateRoute>} />
           <Route path="/dashboard/ingresos" element={<PrivateRoute><ProtectedRoute roles={['Administrador']}><Layout><PlaceholderPage title="Dashboard de Ingresos" /></Layout></ProtectedRoute></PrivateRoute>} />
+          <Route path="/pagos" element={<PrivateRoute><ProtectedRoute roles={['Administrador']}><Layout><PaymentListPage /></Layout></ProtectedRoute></PrivateRoute>} />
+          <Route path="/pagos/nuevo" element={<PrivateRoute><ProtectedRoute roles={['Administrador']}><Layout><PaymentForm /></Layout></ProtectedRoute></PrivateRoute>} />
+          <Route path="/pagos/nuevo/:orderId" element={<PrivateRoute><ProtectedRoute roles={['Administrador']}><Layout><PaymentForm /></Layout></ProtectedRoute></PrivateRoute>} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </AuthProvider>

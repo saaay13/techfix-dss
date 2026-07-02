@@ -14,10 +14,11 @@ return new class extends Migration
         Schema::create('activity_logs', function (Blueprint $table) {
             $table->id();
             $table->text('descripcion_personalizada')->nullable();
-            $table->foreignId('service_order_id')->constrained();
+            $table->foreignId('service_order_item_id')->constrained();
             $table->foreignId('activity_id')->constrained();
             $table->foreignId('user_id')->constrained();
-            $table->index('service_order_id');
+            $table->boolean('completed')->default(false);
+            $table->index('service_order_item_id');
             $table->index('activity_id');
             $table->index('user_id');
             $table->timestamps();

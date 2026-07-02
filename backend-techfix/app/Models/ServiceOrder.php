@@ -22,7 +22,6 @@ class ServiceOrder extends Model
         'costo_total',
         'client_id',
         'device_id',
-        'service_type_id',
         'user_id',
     ];
 
@@ -45,24 +44,29 @@ class ServiceOrder extends Model
         return $this->belongsTo(Device::class);
     }
 
-    public function serviceType(): BelongsTo
-    {
-        return $this->belongsTo(ServiceType::class);
-    }
-
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function componentUsages(): HasMany
-    {
-        return $this->hasMany(ComponentUsage::class);
-    }
-
     public function items(): HasMany
     {
         return $this->hasMany(ServiceOrderItem::class);
+    }
+
+    public function statusHistories(): HasMany
+    {
+        return $this->hasMany(StatusHistory::class);
+    }
+
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+    public function componentUsages(): HasMany
+    {
+        return $this->hasMany(ComponentUsage::class);
     }
 
     public function activityLogs(): HasManyThrough

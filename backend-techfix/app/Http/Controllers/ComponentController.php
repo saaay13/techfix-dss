@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Component;
 use App\Http\Requests\StoreComponentRequest;
 use App\Http\Requests\UpdateComponentRequest;
+use Illuminate\Http\JsonResponse;
 
 class ComponentController extends Controller
 {
@@ -43,5 +44,15 @@ class ComponentController extends Controller
         return response()->json([
             'message' => 'Componente eliminado exitosamente.',
         ]);
+    }
+
+    public function criticalStock(): JsonResponse
+    {
+        $components = Component::with('category')
+            ->criticalStock()
+            ->orderBy('cantidad')
+            ->get();
+
+        return response()->json($components);
     }
 }
