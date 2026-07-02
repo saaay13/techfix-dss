@@ -15,6 +15,9 @@ class ServiceOrderApiTest extends TestCase
 {
     use RefreshDatabase;
 
+    // HU-04: Pruebas de integración del CRUD de órdenes de servicio.
+    // Verifica creación con estado Recibido, prioridad, actualización
+    // y validación de existencia de cliente/equipo/tipo servicio.
     private function authHeaders(): array
     {
         $role = Role::factory()->create(['nombre' => 'Administrador']);

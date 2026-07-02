@@ -6,6 +6,9 @@ use PHPUnit\Framework\TestCase;
 
 class ServiceOrderValidationTest extends TestCase
 {
+    // HU-04: Validación de reglas de negocio para órdenes de servicio:
+    // prioridades válidas (Baja/Media/Alta), estado inicial Recibido y
+    // campos requeridos (cliente, equipo, tipo servicio, diagnóstico).
     private array $validPriorities = ['Baja', 'Media', 'Alta'];
     private string $defaultState = 'Recibido';
 
