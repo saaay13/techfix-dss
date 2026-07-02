@@ -36,6 +36,9 @@ class ServiceOrderController extends Controller
 
             $order = ServiceOrder::create($data);
 
+            $order->codigo_orden = now()->format('dmy') . $order->id;
+            $order->save();
+
             foreach ($itemsData as $item) {
                 $orderItem = $order->items()->create([
                     'service_type_id' => $item['service_type_id'],

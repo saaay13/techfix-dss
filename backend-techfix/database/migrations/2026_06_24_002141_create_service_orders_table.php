@@ -20,6 +20,7 @@ return new class extends Migration
             $table->date('fecha_estimada_entrega')->nullable();
             $table->text('observaciones')->nullable();
             $table->decimal('costo_total', 10, 2)->default(0);
+            $table->string('codigo_orden', 20)->nullable()->unique();
             $table->foreignId('client_id')->constrained();
             $table->foreignId('device_id')->constrained();
             $table->foreignId('user_id')->constrained();

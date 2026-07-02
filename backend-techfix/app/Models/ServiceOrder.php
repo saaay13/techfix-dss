@@ -20,6 +20,7 @@ class ServiceOrder extends Model
         'fecha_estimada_entrega',
         'observaciones',
         'costo_total',
+        'codigo_orden',
         'client_id',
         'device_id',
         'user_id',
