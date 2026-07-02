@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import { getPayments, createPayment } from '../services/payments'
-import { getServiceOrders } from '../services/orders'
+import { getPayments, createPayment } from '../../services/payments'
+import { getServiceOrders } from '../../services/orders'
 
 const METODOS = ['Efectivo', 'Transferencia', 'Tarjeta', 'QR']
 

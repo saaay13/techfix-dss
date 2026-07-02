@@ -174,7 +174,11 @@ export default function DeviceListPage() {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-right space-x-2">
-                    <button onClick={() => navigate(`/equipos/${device.id}/historial`)} className="px-3 py-1 bg-purple-100 text-purple-800 rounded-lg text-xs font-medium hover:bg-purple-200 transition-colors">Historial</button>
+                    <button onClick={() => navigate(`/equipos/${device.id}/historial`)} title="Ver historial de servicios"
+                      className="inline-flex items-center gap-1 whitespace-nowrap px-3 py-1 bg-purple-100 text-purple-800 rounded-lg text-xs font-medium hover:bg-purple-200 transition-colors">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-3.5 h-3.5"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 14l2 2 4-4"/></svg>
+                      Historial
+                    </button>
                     <button onClick={() => openEdit(device.id)} className="px-3 py-1 bg-primary/10 text-primary-600 rounded-lg text-xs font-medium hover:bg-primary/20 transition-colors">Editar</button>
                     {device.activo && (
                       <button onClick={() => handleDelete(device.id, `${device.marca} ${device.modelo}`)} className="px-3 py-1 bg-error/10 text-error rounded-lg text-xs font-medium hover:bg-error/20 transition-colors">Desactivar</button>
