@@ -16,10 +16,17 @@ class ServiceOrderController extends Controller
 {
     public function index()
     {
-        $orders = ServiceOrder::with(['client', 'device', 'user', 'items.serviceType'])
-            ->orderBy('created_at', 'desc')
-            ->get();
-        return response()->json($orders);
+        $query = ServiceOrder::with(['client', 'device', 'user', 'items.serviceType'])
+            ->when(request('search'), fn($q, $s) => $q->search($s))
+            ->when(request('estado'), fn($q, $v) => $q->byEstado($v))
+            ->when(request('prioridad'), fn($q, $v) => $q->byPrioridad($v))
+            ->when(request('client_id'), fn($q, $v) => $q->where('client_id', $v))
+            ->when(request('device_id'), fn($q, $v) => $q->where('device_id', $v))
+            ->when(request('user_id'), fn($q, $v) => $q->where('user_id', $v))
+            ->orderBy('created_at', 'desc');
+
+        $perPage = request('per_page');
+        return response()->json($perPage ? $query->paginate($perPage) : $query->get());
     }
 
     public function store(StoreServiceOrderRequest $request)

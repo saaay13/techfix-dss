@@ -10,7 +10,13 @@ class ServiceTypeController extends Controller
 {
     public function index()
     {
-        return response()->json(ServiceType::orderBy('nombre')->get());
+        $query = ServiceType::query()
+            ->when(request('search'), fn($q, $s) => $q->search($s))
+            ->when(request()->has('activo'), fn($q) => $q->where('activo', request('activo')))
+            ->orderBy('nombre');
+
+        $perPage = request('per_page');
+        return response()->json($perPage ? $query->paginate($perPage) : $query->get());
     }
 
     public function store(StoreServiceTypeRequest $request)

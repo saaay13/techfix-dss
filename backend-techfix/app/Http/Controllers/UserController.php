@@ -9,7 +9,13 @@ class UserController extends Controller
 {
     public function index()
     {
-        return response()->json(User::with('role')->get());
+        $query = User::with('role')
+            ->when(request('search'), fn($q, $s) => $q->search($s))
+            ->when(request('role_id'), fn($q, $v) => $q->where('role_id', $v))
+            ->when(request()->has('activo'), fn($q) => $q->where('activo', request('activo')));
+
+        $perPage = request('per_page');
+        return response()->json($perPage ? $query->paginate($perPage) : $query->get());
     }
 
     public function store(Request $request)
