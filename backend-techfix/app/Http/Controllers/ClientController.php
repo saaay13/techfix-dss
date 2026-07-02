@@ -10,10 +10,12 @@ class ClientController extends Controller
 {
     public function index()
     {
-        $clients = Client::active()
+        $query = Client::query()
             ->when(request('search'), fn($q, $s) => $q->search($s))
-            ->orderBy('id', 'desc')
-            ->paginate(10);
+            ->when(request()->has('activo'), fn($q) => $q->where('activo', request('activo')))
+            ->orderBy('id', 'desc');
+
+        $clients = $query->paginate(10);
 
         return response()->json($clients);
     }

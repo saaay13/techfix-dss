@@ -11,8 +11,14 @@ class ComponentController extends Controller
 {
     public function index()
     {
-        $components = Component::with('category')->orderBy('created_at', 'desc')->get();
-        return response()->json($components);
+        $query = Component::with('category')
+            ->when(request('search'), fn($q, $s) => $q->search($s))
+            ->when(request('category_id'), fn($q, $v) => $q->where('category_id', $v))
+            ->when(request()->has('activo'), fn($q) => $q->where('activo', request('activo')))
+            ->orderBy('created_at', 'desc');
+
+        $perPage = request('per_page');
+        return response()->json($perPage ? $query->paginate($perPage) : $query->get());
     }
 
     public function store(StoreComponentRequest $request)

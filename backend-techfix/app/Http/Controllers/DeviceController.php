@@ -11,11 +11,15 @@ class DeviceController extends Controller
 {
     public function index()
     {
-        $query = Device::with('client')->orderBy('created_at', 'desc');
-        if (request()->has('client_id')) {
-            $query->where('client_id', request('client_id'));
-        }
-        return response()->json($query->get());
+        $query = Device::with('client')
+            ->when(request('search'), fn($q, $s) => $q->search($s))
+            ->when(request('client_id'), fn($q, $v) => $q->where('client_id', $v))
+            ->when(request('estado_fisico'), fn($q, $v) => $q->where('estado_fisico', $v))
+            ->when(request()->has('activo'), fn($q) => $q->where('activo', request('activo')))
+            ->orderBy('created_at', 'desc');
+
+        $perPage = request('per_page');
+        return response()->json($perPage ? $query->paginate($perPage) : $query->get());
     }
 
     public function store(StoreDeviceRequest $request)
