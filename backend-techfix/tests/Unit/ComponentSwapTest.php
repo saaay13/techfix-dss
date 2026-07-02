@@ -6,6 +6,9 @@ use PHPUnit\Framework\TestCase;
 
 class ComponentSwapTest extends TestCase
 {
+    // HU-07: Validación de reglas de negocio a nivel unidad.
+    // Verifica que solo se permitan los tipos 'retirado' e 'instalado',
+    // que los campos requeridos estén definidos, y que cantidades sean positivas.
     private array $allowedTipos = ['retirado', 'instalado'];
 
     public function test_allowed_tipos(): void

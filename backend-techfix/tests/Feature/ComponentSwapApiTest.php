@@ -16,11 +16,15 @@ class ComponentSwapApiTest extends TestCase
 {
     use RefreshDatabase;
 
+    // HU-07: Pruebas de integración para el flujo completo de cambio de componente.
+    // Se prueban: registro exitoso, validación de componentes existentes,
+    // listado de cambios, y valor por defecto de devuelto_al_cliente.
     private ServiceOrder $order;
     private Component $componentRetirado;
     private Component $componentInstalado;
     private User $tech;
 
+    // Configura datos base: un técnico, una orden, y dos componentes en inventario
     protected function setUp(): void
     {
         parent::setUp();
@@ -49,6 +53,8 @@ class ComponentSwapApiTest extends TestCase
         ]);
     }
 
+    // Verifica que un técnico pueda registrar un cambio completo (retirado + instalado)
+    // y que ambos detalles se persistan correctamente en swap_details
     public function test_technician_can_register_component_swap(): void
     {
         $response = $this->actingAs($this->tech)->postJson('/api/component-swaps', [
@@ -82,6 +88,7 @@ class ComponentSwapApiTest extends TestCase
         ]);
     }
 
+    // Verifica que IDs inexistentes de componente retirado/instalado sean rechazados con 422
     public function test_requires_valid_components(): void
     {
         $response = $this->actingAs($this->tech)->postJson('/api/component-swaps', [
@@ -96,6 +103,7 @@ class ComponentSwapApiTest extends TestCase
             ->assertJsonValidationErrors(['retirado_component_id', 'instalado_component_id']);
     }
 
+    // Verifica que el endpoint GET devuelva el listado de cambios con sus detalles
     public function test_can_list_swaps(): void
     {
         $swap = \App\Models\ComponentSwap::factory()->create([
@@ -120,6 +128,7 @@ class ComponentSwapApiTest extends TestCase
             ->assertJsonCount(1);
     }
 
+    // Verifica que el campo devuelto_al_cliente tenga por defecto false cuando no se envía
     public function test_devuelto_al_cliente_defaults_to_false(): void
     {
         $response = $this->actingAs($this->tech)->postJson('/api/component-swaps', [
