@@ -43,6 +43,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('activities', [ActivityController::class, 'index']);
     Route::get('activities/{activity}', [ActivityController::class, 'show']);
     Route::post('service-orders/{service_order}/activities', [ServiceOrderController::class, 'storeActivity']);
+    Route::put('service-orders/{service_order}/activity-logs/{activity_log}/toggle-completed', [ServiceOrderController::class, 'toggleCompleted']);
+    Route::delete('service-orders/{service_order}/activity-logs/{activity_log}', [ServiceOrderController::class, 'destroyActivity']);
 
     Route::middleware('role:Administrador')->group(function () {
         Route::apiResource('activities', ActivityController::class)->except(['index', 'show']);

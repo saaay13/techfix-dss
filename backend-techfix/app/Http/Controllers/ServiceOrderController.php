@@ -18,7 +18,7 @@ class ServiceOrderController extends Controller
 {
     public function index()
     {
-        $orders = ServiceOrder::with(['client', 'device', 'user', 'items.serviceType'])
+        $orders = ServiceOrder::with(['client', 'device', 'user', 'items.serviceType', 'items.activityLogs.activity'])
             ->orderBy('created_at', 'desc')
             ->get();
         return response()->json($orders);
@@ -37,14 +37,26 @@ class ServiceOrderController extends Controller
             $order = ServiceOrder::create($data);
 
             foreach ($itemsData as $item) {
-                $order->items()->create([
+                $orderItem = $order->items()->create([
                     'service_type_id' => $item['service_type_id'],
                     'descripcion' => $item['descripcion'] ?? null,
                     'precio' => $item['precio'],
                 ]);
+
+                $defaultActivities = Activity::whereHas('serviceTypes', function ($q) use ($item) {
+                    $q->where('service_type_id', $item['service_type_id']);
+                })->get();
+
+                foreach ($defaultActivities as $activity) {
+                    ActivityLog::create([
+                        'service_order_item_id' => $orderItem->id,
+                        'activity_id' => $activity->id,
+                        'user_id' => auth()->id(),
+                    ]);
+                }
             }
 
-            $order->load(['client', 'device', 'user', 'items.serviceType']);
+            $order->load(['client', 'device', 'user', 'items.serviceType', 'items.activityLogs.activity']);
 
             return response()->json([
                 'message' => 'Orden de servicio creada exitosamente.',
@@ -63,7 +75,7 @@ class ServiceOrderController extends Controller
 
     public function show(ServiceOrder $serviceOrder)
     {
-        $serviceOrder->load(['client', 'device', 'user', 'items.serviceType']);
+        $serviceOrder->load(['client', 'device', 'user', 'items.serviceType', 'items.activityLogs.activity', 'statusHistories']);
         return response()->json($serviceOrder);
     }
 
@@ -77,16 +89,28 @@ class ServiceOrderController extends Controller
                 $data['costo_total'] = collect($itemsData)->sum('precio');
                 $serviceOrder->items()->delete();
                 foreach ($itemsData as $item) {
-                    $serviceOrder->items()->create([
+                    $orderItem = $serviceOrder->items()->create([
                         'service_type_id' => $item['service_type_id'],
                         'descripcion' => $item['descripcion'] ?? null,
                         'precio' => $item['precio'],
                     ]);
+
+                    $defaultActivities = Activity::whereHas('serviceTypes', function ($q) use ($item) {
+                        $q->where('service_type_id', $item['service_type_id']);
+                    })->get();
+
+                    foreach ($defaultActivities as $activity) {
+                        ActivityLog::create([
+                            'service_order_item_id' => $orderItem->id,
+                            'activity_id' => $activity->id,
+                            'user_id' => auth()->id(),
+                        ]);
+                    }
                 }
             }
 
             $serviceOrder->update($data);
-            $serviceOrder->load(['client', 'device', 'user', 'items.serviceType']);
+            $serviceOrder->load(['client', 'device', 'user', 'items.serviceType', 'items.activityLogs.activity', 'statusHistories']);
 
             return response()->json([
                 'message' => 'Orden de servicio actualizada exitosamente.',
@@ -142,7 +166,7 @@ class ServiceOrderController extends Controller
             'user_id' => auth()->id(),
         ]);
 
-        $serviceOrder->load(['client', 'device', 'user', 'items.serviceType']);
+        $serviceOrder->load(['client', 'device', 'user', 'items.serviceType', 'items.activityLogs.activity', 'statusHistories']);
 
         return response()->json([
             'message' => "Estado actualizado a '{$nuevoEstado}'.",
@@ -153,33 +177,64 @@ class ServiceOrderController extends Controller
     public function storeActivity(Request $request, ServiceOrder $serviceOrder)
     {
         $validated = $request->validate([
-            'activity_id' => 'required|integer|exists:activities,id',
+            'activity_ids' => 'required|array|min:1',
+            'activity_ids.*' => 'required|integer|exists:activities,id',
+            'service_order_item_id' => 'required|integer|exists:service_order_items,id',
             'descripcion_personalizada' => 'nullable|string|max:500',
         ]);
 
-        $item = $serviceOrder->items()->first();
+        $item = $serviceOrder->items()->find($validated['service_order_item_id']);
 
         if (!$item) {
             return response()->json([
-                'message' => 'La orden no tiene servicios asociados. Agregue un servicio antes de registrar actividades.',
+                'message' => 'El ítem de servicio no pertenece a esta orden.',
             ], 422);
         }
 
-        $activity = Activity::findOrFail($validated['activity_id']);
+        $logs = [];
+        foreach ($validated['activity_ids'] as $activityId) {
+            $logs[] = ActivityLog::create([
+                'service_order_item_id' => $item->id,
+                'activity_id' => $activityId,
+                'user_id' => auth()->id(),
+                'descripcion_personalizada' => $validated['descripcion_personalizada'] ?? null,
+            ]);
+        }
 
-        $log = ActivityLog::create([
-            'service_order_item_id' => $item->id,
-            'activity_id' => $activity->id,
-            'user_id' => auth()->id(),
-            'descripcion_personalizada' => $validated['descripcion_personalizada'] ?? null,
-        ]);
-
-        $log->load(['activity', 'user']);
+        $item->load('activityLogs.activity');
 
         return response()->json([
-            'message' => 'Actividad registrada exitosamente.',
-            'activity_log' => $log,
+            'message' => 'Actividades registradas exitosamente.',
+            'activity_logs' => $logs,
+            'item' => $item,
         ], 201);
+    }
+
+    public function toggleCompleted(ServiceOrder $serviceOrder, ActivityLog $activityLog)
+    {
+        if ($activityLog->serviceOrderItem->service_order_id !== $serviceOrder->id) {
+            return response()->json(['message' => 'La actividad no pertenece a esta orden.'], 422);
+        }
+
+        $activityLog->update(['completed' => !$activityLog->completed]);
+
+        return response()->json([
+            'message' => 'Estado de actividad actualizado.',
+            'activity_log' => $activityLog->fresh(),
+        ]);
+    }
+
+    public function destroyActivity(ServiceOrder $serviceOrder, ActivityLog $activityLog)
+    {
+        if ($activityLog->serviceOrderItem->service_order_id !== $serviceOrder->id) {
+            return response()->json(['message' => 'La actividad no pertenece a esta orden.'], 422);
+        }
+
+        $activityLog->delete();
+
+        return response()->json([
+            'message' => 'Actividad eliminada del servicio.',
+        ]);
     }
 
     public function destroy(ServiceOrder $serviceOrder)

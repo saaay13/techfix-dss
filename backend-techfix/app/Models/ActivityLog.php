@@ -12,11 +12,14 @@ class ActivityLog extends Model
         'activity_id',
         'user_id',
         'descripcion_personalizada',
+        'completed',
     ];
 
-    public function serviceOrderItem(): BelongsTo
+    protected function casts(): array
     {
-        return $this->belongsTo(ServiceOrderItem::class);
+        return [
+            'completed' => 'boolean',
+        ];
     }
 
     public function activity(): BelongsTo
@@ -27,5 +30,10 @@ class ActivityLog extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function serviceOrderItem(): BelongsTo
+    {
+        return $this->belongsTo(ServiceOrderItem::class);
     }
 }

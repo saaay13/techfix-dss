@@ -18,6 +18,7 @@ import ActivityFormPage from './pages/ActivityFormPage'
 import PaymentListPage from './pages/payments/PaymentListPage'
 import PaymentForm from './pages/payments/PaymentForm'
 import DeviceServiceHistoryPage from './pages/devices/DeviceServiceHistoryPage'
+import OrderDetailPage from './pages/orders/OrderDetailPage'
 
 export default function App() {
   return (
@@ -31,6 +32,7 @@ export default function App() {
           <Route path="/equipos" element={<PrivateRoute><Layout><DeviceListPage /></Layout></PrivateRoute>} />
           <Route path="/equipos/:id/historial" element={<PrivateRoute><Layout><DeviceServiceHistoryPage /></Layout></PrivateRoute>} />
           <Route path="/ordenes" element={<PrivateRoute><Layout><ServiceOrderListPage /></Layout></PrivateRoute>} />
+          <Route path="/ordenes/:id" element={<PrivateRoute><Layout><OrderDetailPage /></Layout></PrivateRoute>} />
           <Route path="/componentes" element={<PrivateRoute><Layout><ComponentListPage /></Layout></PrivateRoute>} />
           <Route path="/alertas-stock" element={<PrivateRoute><Layout><CriticalStockPage /></Layout></PrivateRoute>} />
           <Route path="/actividades" element={<PrivateRoute><ProtectedRoute roles={['Administrador']}><Layout><ActivityListPage /></Layout></ProtectedRoute></PrivateRoute>} />

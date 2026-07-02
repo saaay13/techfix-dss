@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class ServiceType extends Model
 {
@@ -19,8 +20,13 @@ class ServiceType extends Model
     protected function casts(): array
     {
         return [
-            'precio' => 'decimal:2',
             'activo' => 'boolean',
+            'precio' => 'decimal:2',
         ];
+    }
+
+    public function activities(): BelongsToMany
+    {
+        return $this->belongsToMany(Activity::class, 'activity_service_type');
     }
 }

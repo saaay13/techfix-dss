@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('service_order_item_id')->constrained();
             $table->foreignId('activity_id')->constrained();
             $table->foreignId('user_id')->constrained();
+            $table->boolean('completed')->default(false);
             $table->index('service_order_item_id');
             $table->index('activity_id');
             $table->index('user_id');
