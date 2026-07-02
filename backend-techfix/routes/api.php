@@ -16,5 +16,7 @@ Route::get('/ping', function () {
 
 Route::apiResource('users', UserController::class);
 Route::apiResource('roles', RoleController::class);
+// HU-02: Rutas RESTful para equipos (devices) - CRUD completo.
+// El recepcionista registra equipos asociados a un cliente.
 Route::apiResource('devices', DeviceController::class);
 Route::apiResource('clients', ClientController::class);

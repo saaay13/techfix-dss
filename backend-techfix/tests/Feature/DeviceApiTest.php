@@ -11,6 +11,9 @@ class DeviceApiTest extends TestCase
 {
     use RefreshDatabase;
 
+    // HU-02: Pruebas de integración del CRUD de equipos.
+    // Verifica registro, listado, actualización, desactivación
+    // y validación de unicidad del número de serie.
     protected function setUp(): void
     {
         parent::setUp();

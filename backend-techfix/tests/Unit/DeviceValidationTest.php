@@ -6,6 +6,9 @@ use PHPUnit\Framework\TestCase;
 
 class DeviceValidationTest extends TestCase
 {
+    // HU-02: Validación de reglas de negocio para equipos:
+    // tipos permitidos (PC, Laptop, consolas, celular, etc.),
+    // estados físicos (Bueno/Regular/Malo) y campos requeridos.
     private array $validTypes = [
         'PC', 'Laptop', 'PlayStation', 'Xbox', 'Nintendo', 'Celular', 'Electrónica general',
     ];
