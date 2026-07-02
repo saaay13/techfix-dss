@@ -9,6 +9,8 @@ use Illuminate\Database\QueryException;
 
 class DeviceController extends Controller
 {
+    // HU-02: CRUD de equipos. El recepcionista registra el equipo con los
+    // datos del cliente, tipo, marca, modelo y número de serie único.
     public function index()
     {
         $devices = Device::with('client')->orderBy('created_at', 'desc')->get();

@@ -10,6 +10,9 @@ class Device extends Model
 {
     use HasFactory;
 
+    // HU-02: Equipo registrado por el recepcionista. Cada equipo pertenece
+    // a un cliente y tiene un número de serie único como identificador físico.
+    // El borrado es lógico (activo = false) para preservar el historial.
     protected $fillable = [
         'tipo_equipo',
         'marca',

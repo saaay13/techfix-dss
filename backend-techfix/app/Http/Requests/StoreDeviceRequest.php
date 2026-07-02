@@ -7,6 +7,9 @@ use Illuminate\Validation\Rule;
 
 class StoreDeviceRequest extends FormRequest
 {
+    // HU-02: Valida campos obligatorios del equipo (tipo, marca, modelo, serie).
+    // El número de serie debe ser único para evitar duplicados físicos.
+    // El cliente debe existir en la tabla clients.
     public function authorize(): bool
     {
         return true;
