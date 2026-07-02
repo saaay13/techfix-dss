@@ -11,7 +11,7 @@ class Category extends Model
     /** @use HasFactory<CategoryFactory> */
     use HasFactory;
 
-    protected $fillable = ['nombre', 'activo'];
+    protected $fillable = ['nombre', 'descripcion', 'activo'];
 
     protected function casts(): array
     {

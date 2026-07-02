@@ -13,7 +13,7 @@ export default function Sidebar() {
     { label: 'Órdenes', path: '/ordenes' },
     { label: 'Inventario', path: '/componentes' },
     { label: 'Alertas Stock', path: '/alertas-stock' },
-    ...(isAdmin ? [{ label: 'Actividades', path: '/actividades' }, { label: 'Tipos Servicio', path: '/tipos-servicio' }, { label: 'Usuarios', path: '/usuarios' }, { label: 'Pagos', path: '/pagos' }] : []),
+    ...(isAdmin ? [{ label: 'Actividades', path: '/actividades' }, { label: 'Categorías', path: '/categorias' }, { label: 'Tipos Servicio', path: '/tipos-servicio' }, { label: 'Usuarios', path: '/usuarios' }, { label: 'Pagos', path: '/pagos' }] : []),
     { label: 'Reportes', path: '/reportes/financieros' },
   ]
 

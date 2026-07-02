@@ -48,6 +48,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('service-types', [ServiceTypeController::class, 'store']);
         Route::put('service-types/{service_type}', [ServiceTypeController::class, 'update']);
         Route::delete('service-types/{service_type}', [ServiceTypeController::class, 'destroy']);
+        Route::post('categories', [CategoryController::class, 'store']);
+        Route::put('categories/{category}', [CategoryController::class, 'update']);
+        Route::delete('categories/{category}', [CategoryController::class, 'destroy']);
         Route::apiResource('payments', PaymentController::class)->only(['index', 'store', 'show']);
         Route::get('service-orders/{service_order}/payments', [PaymentController::class, 'byOrder']);
         Route::get('/reports/financial', function () {

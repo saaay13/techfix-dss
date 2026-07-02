@@ -18,6 +18,7 @@ import ActivityFormPage from './pages/ActivityFormPage'
 import PaymentListPage from './pages/payments/PaymentListPage'
 import PaymentForm from './pages/payments/PaymentForm'
 import DeviceServiceHistoryPage from './pages/devices/DeviceServiceHistoryPage'
+import CategoryListPage from './pages/categories/CategoryListPage'
 
 export default function App() {
   return (
@@ -38,6 +39,7 @@ export default function App() {
           <Route path="/actividades/:id/editar" element={<PrivateRoute><ProtectedRoute roles={['Administrador']}><Layout><ActivityFormPage /></Layout></ProtectedRoute></PrivateRoute>} />
           <Route path="/usuarios" element={<PrivateRoute><ProtectedRoute roles={['Administrador']}><Layout><UserListPage /></Layout></ProtectedRoute></PrivateRoute>} />
           <Route path="/tipos-servicio" element={<PrivateRoute><ProtectedRoute roles={['Administrador']}><Layout><ServiceTypeListPage /></Layout></ProtectedRoute></PrivateRoute>} />
+          <Route path="/categorias" element={<PrivateRoute><ProtectedRoute roles={['Administrador']}><Layout><CategoryListPage /></Layout></ProtectedRoute></PrivateRoute>} />
           <Route path="/reportes/financieros" element={<PrivateRoute><ProtectedRoute roles={['Administrador']}><Layout><PlaceholderPage title="Reportes Financieros" /></Layout></ProtectedRoute></PrivateRoute>} />
           <Route path="/dashboard/ingresos" element={<PrivateRoute><ProtectedRoute roles={['Administrador']}><Layout><PlaceholderPage title="Dashboard de Ingresos" /></Layout></ProtectedRoute></PrivateRoute>} />
           <Route path="/pagos" element={<PrivateRoute><ProtectedRoute roles={['Administrador']}><Layout><PaymentListPage /></Layout></ProtectedRoute></PrivateRoute>} />
