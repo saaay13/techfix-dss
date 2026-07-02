@@ -6,6 +6,8 @@ use PHPUnit\Framework\TestCase;
 
 class ServiceTypeTest extends TestCase
 {
+    // HU-16: Validación unidad de las reglas de catálogo:
+    // campos requeridos (nombre, precio), precio no negativo, borrado lógico.
     public function test_required_fields(): void
     {
         $required = ['nombre', 'precio'];

@@ -12,6 +12,8 @@ class ServiceTypeApiTest extends TestCase
 {
     use RefreshDatabase;
 
+    // HU-16: Pruebas de integración del catálogo de tipos de servicio.
+    // Verifica CRUD completo, permisos de administrador y validación de unicidad.
     private User $admin;
     private User $tech;
 
