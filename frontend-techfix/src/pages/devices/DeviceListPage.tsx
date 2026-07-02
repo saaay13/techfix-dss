@@ -1,4 +1,5 @@
 import { FormEvent, useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { getDevices, getDevice, createDevice, updateDevice, deleteDevice, getDeviceTypes, getPhysicalStates } from '../../services/devices'
 import { getClients } from '../../services/clients'
 import Modal from '../../components/Modal'
@@ -24,6 +25,7 @@ interface Client {
 const emptyForm = { tipo_equipo: '', marca: '', modelo: '', numero_serie: '', estado_fisico: '', client_id: 0 }
 
 export default function DeviceListPage() {
+  const navigate = useNavigate()
   const [devices, setDevices] = useState<Device[] | null>(null)
   const [clients, setClients] = useState<Client[]>([])
   const [error, setError] = useState('')
@@ -173,6 +175,9 @@ export default function DeviceListPage() {
                   </td>
                   <td className="px-4 py-3 text-right">
                     <span className="inline-flex items-center gap-1 whitespace-nowrap">
+                      <button onClick={() => navigate(`/equipos/${device.id}/historial`)} className="p-1.5 hover:bg-purple-100 rounded-lg transition-colors group" title="Ver historial de servicios">
+                        <svg className="w-4 h-4 text-purple-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 14l2 2 4-4"/></svg>
+                      </button>
                       <button onClick={() => openEdit(device.id)} className="p-1.5 hover:bg-primary/10 rounded-lg transition-colors group" title="Editar">
                         <svg className="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                       </button>

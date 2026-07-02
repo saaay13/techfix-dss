@@ -33,6 +33,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::apiResource('clients', ClientController::class);
     Route::apiResource('devices', DeviceController::class);
+    Route::get('devices/{device}/service-history', [DeviceController::class, 'serviceHistory']);
     Route::apiResource('service-types', ServiceTypeController::class)->only(['index', 'show']);
     Route::apiResource('service-orders', ServiceOrderController::class);
     Route::put('service-orders/{service_order}/status', [ServiceOrderController::class, 'updateStatus']);
