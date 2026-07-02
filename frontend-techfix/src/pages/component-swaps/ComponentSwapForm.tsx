@@ -3,6 +3,9 @@ import { getServiceOrders } from '../../services/orders'
 import { getComponents } from '../../services/components'
 import { createComponentSwap } from '../../services/componentSwaps'
 
+// HU-07: Formulario para registrar el cambio de un componente en una orden de servicio.
+// El técnico selecciona el componente retirado (del inventario) y el componente instalado,
+// con la opción de indicar si el retirado fue devuelto al cliente.
 export default function ComponentSwapForm() {
   const [orders, setOrders] = useState<any[]>([])
   const [components, setComponents] = useState<any[]>([])
@@ -19,11 +22,14 @@ export default function ComponentSwapForm() {
   const [success, setSuccess] = useState('')
   const [loading, setLoading] = useState(false)
 
+  // Carga las órdenes activas y los componentes del inventario al montar el formulario
   useEffect(() => {
     getServiceOrders().then(setOrders)
     getComponents().then(setComponents)
   }, [])
 
+  // Envía los datos en el formato que espera el backend:
+  // retirado_component_id / instalado_component_id + sus cantidades
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setErrors({})
@@ -41,6 +47,7 @@ export default function ComponentSwapForm() {
         instalado_cantidad: Number(instaladoCantidad),
       })
       setSuccess(`Cambio #${data.component_swap.id} registrado exitosamente.`)
+      // Resetea el formulario después del registro exitoso
       setSelectedOrderId('')
       setObservaciones('')
       setDevueltoAlCliente(false)
@@ -80,6 +87,7 @@ export default function ComponentSwapForm() {
       )}
 
       <form onSubmit={handleSubmit}>
+        {/* Selección de la orden de servicio donde ocurrió el cambio */}
         <div style={{ marginBottom: 16 }}>
           <label>Orden de Servicio <span style={{ color: 'red' }}>*</span></label>
           <select value={selectedOrderId} onChange={e => setSelectedOrderId(e.target.value)}
@@ -92,6 +100,7 @@ export default function ComponentSwapForm() {
           {errors.service_order_id && <small style={{ color: 'red' }}>{errors.service_order_id}</small>}
         </div>
 
+        {/* Componente que se retira del equipo y del inventario */}
         <fieldset style={{ border: '1px solid #ddd', borderRadius: 8, padding: 16, marginBottom: 16 }}>
           <legend style={{ fontWeight: 'bold', fontSize: 14 }}>Componente Retirado</legend>
 
@@ -115,6 +124,7 @@ export default function ComponentSwapForm() {
           </div>
         </fieldset>
 
+        {/* Componente nuevo que se instala en el equipo */}
         <fieldset style={{ border: '1px solid #ddd', borderRadius: 8, padding: 16, marginBottom: 16 }}>
           <legend style={{ fontWeight: 'bold', fontSize: 14 }}>Componente Instalado</legend>
 
@@ -138,12 +148,15 @@ export default function ComponentSwapForm() {
           </div>
         </fieldset>
 
+        {/* Observaciones opcionales sobre el cambio */}
         <div style={{ marginBottom: 16 }}>
           <label>Observaciones</label>
           <textarea value={observaciones} onChange={e => setObservaciones(e.target.value)} rows={2}
             style={{ display: 'block', width: '100%', padding: 8, marginTop: 4 }} />
         </div>
 
+        {/* HU-07: Checkbox para indicar si el componente retirado fue devuelto al cliente.
+            Esto permite al técnico documentar si el cliente se lleva la pieza dañada. */}
         <div style={{ marginBottom: 24 }}>
           <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
             <input type="checkbox" checked={devueltoAlCliente} onChange={e => setDevueltoAlCliente(e.target.checked)} />

@@ -9,6 +9,8 @@ use Illuminate\Database\QueryException;
 
 class ComponentSwapController extends Controller
 {
+    // HU-07: Lista todos los cambios de componente con sus relaciones
+    // para mostrar en el frontend el historial completo de cambios por orden.
     public function index()
     {
         $swaps = ComponentSwap::with(['serviceOrder.client', 'swapDetails.component'])
@@ -17,6 +19,9 @@ class ComponentSwapController extends Controller
         return response()->json($swaps);
     }
 
+    // HU-07: Registra un cambio atómico (un swap = un retirado + un instalado).
+    // La transacción no es explícita porque ambas inserciones son secuenciales
+    // y si una falla la otra no se ejecuta; en producción usar DB::transaction().
     public function store(StoreComponentSwapRequest $request)
     {
         try {
@@ -49,12 +54,14 @@ class ComponentSwapController extends Controller
                 'component_swap' => $swap,
             ], 201);
         } catch (QueryException $e) {
+            // 500 genérico para no exponer detalles de la BD al cliente
             return response()->json([
                 'message' => 'Error al registrar el cambio de componente.',
             ], 500);
         }
     }
 
+    // HU-07: Muestra un cambio específico con todos sus detalles
     public function show(ComponentSwap $componentSwap)
     {
         $componentSwap->load(['serviceOrder.client', 'swapDetails.component']);

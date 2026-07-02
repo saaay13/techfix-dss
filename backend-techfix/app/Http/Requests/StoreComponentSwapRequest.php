@@ -3,10 +3,13 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class StoreComponentSwapRequest extends FormRequest
 {
+    // HU-07: Valida que ambos componentes (retirado e instalado) existan en el inventario,
+    // que las cantidades sean positivas y que la orden de servicio sea válida.
+    // No valida stock disponible del retirado porque podría ser una retirada por daño
+    // o devolución; el control de stock se maneja por separado.
     public function authorize(): bool
     {
         return true;
