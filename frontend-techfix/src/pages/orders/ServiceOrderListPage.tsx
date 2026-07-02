@@ -10,7 +10,7 @@ interface ServiceOrderItem {
   service_type_id: number
   descripcion?: string
   precio: number
-  serviceType?: { id: number; nombre: string }
+  service_type: { id: number; nombre: string }
 }
 
 interface ServiceOrder {
@@ -284,7 +284,7 @@ export default function ServiceOrderListPage() {
                   <td className="px-4 py-3 text-muted-foreground">{order.device?.tipo_equipo} - {order.device?.marca} {order.device?.modelo}</td>
                   <td className="px-4 py-3 text-muted-foreground">
                     {(order.items || []).map((item, i) => (
-                      <span key={i} className="inline-block mr-2">{item.serviceType?.nombre}{i < order.items.length - 1 ? ',' : ''}</span>
+                      <span key={i} className="inline-block mr-2">{item.service_type?.nombre}{i < order.items.length - 1 ? ',' : ''}</span>
                     ))}
                   </td>
                   <td className="px-4 py-3 text-right text-foreground font-mono">Bs. {Number(order.costo_total || 0).toLocaleString('es-BO', { minimumFractionDigits: 2 })}</td>

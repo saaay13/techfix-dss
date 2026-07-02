@@ -4,7 +4,7 @@ import { getDevice, getDeviceServiceHistory } from '../../services/devices'
 
 interface ServiceOrderItem {
   service_type_id: number
-  serviceType: { id: number; nombre: string }
+  service_type: { id: number; nombre: string }
 }
 
 interface ServiceOrder {
@@ -105,7 +105,7 @@ export default function DeviceServiceHistoryPage() {
                 <tr key={order.id} className="border-b border-border last:border-0 hover:bg-muted/30 transition-colors">
                   <td className="px-4 py-3 text-foreground font-mono">#{order.id}</td>
                   <td className="px-4 py-3 text-muted-foreground">{order.fecha_ingreso}</td>
-                  <td className="px-4 py-3 text-muted-foreground">{order.items?.map(i => i.serviceType?.nombre).join(', ') || '—'}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{order.items?.map(i => i.service_type?.nombre).join(', ') || '—'}</td>
                   <td className="px-4 py-3 text-foreground max-w-xs truncate" title={order.diagnostico_inicial}>
                     {order.diagnostico_inicial}
                   </td>
