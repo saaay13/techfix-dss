@@ -6,6 +6,8 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreServiceTypeRequest extends FormRequest
 {
+    // HU-16: Valida que el nombre sea único (para evitar duplicados en el catálogo),
+    // el precio no sea negativo y la descripción sea opcional.
     public function authorize(): bool
     {
         return true;

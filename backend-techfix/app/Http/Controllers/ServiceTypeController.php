@@ -8,6 +8,8 @@ use App\Http\Requests\UpdateServiceTypeRequest;
 
 class ServiceTypeController extends Controller
 {
+    // HU-16: CRUD completo de tipos de servicio. El index muestra todos (orden alfabético),
+    // incluyendo inactivos, para que el administrador pueda ver el catálogo completo.
     public function index()
     {
         return response()->json(ServiceType::orderBy('nombre')->get());
@@ -36,6 +38,8 @@ class ServiceTypeController extends Controller
         ]);
     }
 
+    // HU-16: Borrado lógico. No se elimina el registro para mantener la
+    // integridad referencial con órdenes de servicio existentes.
     public function destroy(ServiceType $serviceType)
     {
         $serviceType->update(['activo' => false]);

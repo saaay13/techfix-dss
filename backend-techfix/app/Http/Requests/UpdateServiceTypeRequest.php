@@ -7,6 +7,8 @@ use Illuminate\Validation\Rule;
 
 class UpdateServiceTypeRequest extends FormRequest
 {
+    // HU-16: Misma validación que StoreServiceTypeRequest pero ignorando
+    // el ID actual para permitir mantener el mismo nombre en la actualización.
     public function authorize(): bool
     {
         return true;
