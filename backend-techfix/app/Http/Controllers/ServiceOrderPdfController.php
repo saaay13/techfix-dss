@@ -14,11 +14,11 @@ class ServiceOrderPdfController extends Controller
             $order = ServiceOrder::with([
                 'client',
                 'device',
-                'serviceType',
                 'user',
+                'items.serviceType',
+                'items.activityLogs.activity',
+                'items.activityLogs.user',
                 'componentUsages.component',
-                'activityLogs.activity',
-                'activityLogs.user',
             ])->findOrFail($id);
 
             $pdf = Pdf::loadView('pdf.service-order', [
@@ -33,6 +33,7 @@ class ServiceOrderPdfController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al generar el PDF.',
+                'error' => $e->getMessage(),
             ], 500);
         }
     }

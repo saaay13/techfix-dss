@@ -28,6 +28,9 @@
         .badge-progreso { background: #cce5ff; color: #004085; }
         .badge-completado { background: #d4edda; color: #155724; }
         .badge-entregado { background: #d6d8db; color: #383d41; }
+        .estados-table td { vertical-align: top; }
+        .completed { color: #155724; }
+        .pending { color: #856404; }
     </style>
 </head>
 <body>
@@ -39,10 +42,10 @@
         <div class="title">
             <h1>Hoja de Servicio</h1>
             <p>Orden #{{ $order->id }}</p>
-            <p>Fecha: {{ $order->fecha_ingreso->format('d/m/Y') }}</p>
+            <p>Fecha: {{ \Carbon\Carbon::parse($order->fecha_ingreso)->format('d/m/Y') }}</p>
             <p>
                 Estado:
-                <span class="badge badge-{{ $order->estado === 'Recibido' ? 'recibido' : ($order->estado === 'En Progreso' ? 'progreso' : ($order->estado === 'Completado' ? 'completado' : 'entregado')) }}">
+                <span class="badge badge-{{ $order->estado === 'Recibido' ? 'recibido' : ($order->estado === 'En reparación' ? 'progreso' : ($order->estado === 'Finalizado' ? 'completado' : 'entregado')) }}">
                     {{ $order->estado }}
                 </span>
             </p>
@@ -75,24 +78,53 @@
         </div>
     </div>
 
-    @if($order->activityLogs->count() > 0)
+    <h3 style="color:#1e3a5f; margin-bottom:8px;">Servicios Realizados</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Servicio</th>
+                <th>Descripción</th>
+                <th>Precio</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($order->items as $item)
+                <tr>
+                    <td>{{ $item->serviceType->nombre ?? '—' }}</td>
+                    <td>{{ $item->descripcion ?? '—' }}</td>
+                    <td>Bs. {{ number_format($item->precio, 2) }}</td>
+                </tr>
+            @endforeach
+            <tr class="total-row">
+                <td colspan="2" style="text-align:right;">Total Servicios</td>
+                <td>Bs. {{ number_format($order->items->sum('precio'), 2) }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    @php
+        $allLogs = $order->items->flatMap->activityLogs;
+    @endphp
+    @if($allLogs->count() > 0)
         <h3 style="color:#1e3a5f; margin-bottom:8px;">Actividades Realizadas</h3>
         <table>
             <thead>
                 <tr>
                     <th>Actividad</th>
-                    <th>Descripción</th>
+                    <th>Servicio</th>
+                    <th>Estado</th>
                     <th>Realizado por</th>
                     <th>Fecha</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach($order->activityLogs as $log)
+                @foreach($allLogs as $log)
                     <tr>
                         <td>{{ $log->activity->nombre ?? '—' }}</td>
-                        <td>{{ $log->descripcion_personalizada ?? '—' }}</td>
+                        <td>{{ $log->serviceOrderItem->serviceType->nombre ?? '—' }}</td>
+                        <td class="{{ $log->completed ? 'completed' : 'pending' }}">{{ $log->completed ? 'Completado' : 'Pendiente' }}</td>
                         <td>{{ $log->user->name ?? '—' }}</td>
-                        <td>{{ $log->created_at->format('d/m/Y H:i') }}</td>
+                        <td>{{ $log->created_at ? \Carbon\Carbon::parse($log->created_at)->format('d/m/Y H:i') : '—' }}</td>
                     </tr>
                 @endforeach
             </tbody>
@@ -120,14 +152,10 @@
                     <tr>
                         <td>{{ $usage->component->nombre ?? '—' }}</td>
                         <td>{{ $usage->cantidad }}</td>
-                        <td>${{ number_format($usage->precio_unitario, 2) }}</td>
-                        <td>${{ number_format($subtotal, 2) }}</td>
+                        <td>Bs. {{ number_format($usage->precio_unitario, 2) }}</td>
+                        <td>Bs. {{ number_format($subtotal, 2) }}</td>
                     </tr>
                 @endforeach
-                <tr class="total-row">
-                    <td colspan="3" style="text-align:right;">Total Componentes</td>
-                    <td>${{ number_format($subtotalComponents, 2) }}</td>
-                </tr>
             </tbody>
         </table>
     @endif
@@ -136,21 +164,22 @@
     <table>
         <tbody>
             @php
+                $serviceCost = $order->items->sum('precio');
                 $componentCost = $order->componentUsages->sum(fn($u) => $u->cantidad * $u->precio_unitario);
-                $serviceCost = $order->costo_total - $componentCost;
-                if ($serviceCost < 0) $serviceCost = 0;
             @endphp
             <tr>
-                <td style="width:70%;">Costo de servicio</td>
-                <td style="width:30%;">${{ number_format($serviceCost, 2) }}</td>
+                <td style="width:70%;">Servicios</td>
+                <td style="width:30%;">Bs. {{ number_format($serviceCost, 2) }}</td>
             </tr>
+            @if($componentCost > 0)
             <tr>
                 <td>Componentes</td>
-                <td>${{ number_format($componentCost, 2) }}</td>
+                <td>Bs. {{ number_format($componentCost, 2) }}</td>
             </tr>
+            @endif
             <tr class="total-row">
                 <td>Costo Total</td>
-                <td>${{ number_format($order->costo_total, 2) }}</td>
+                <td>Bs. {{ number_format($serviceCost + $componentCost, 2) }}</td>
             </tr>
         </tbody>
     </table>

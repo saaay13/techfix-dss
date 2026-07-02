@@ -9,16 +9,20 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class ActivityLog extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'descripcion_personalizada',
-        'service_order_id',
+        'service_order_item_id',
         'activity_id',
         'user_id',
+        'completed',
     ];
 
-    public function serviceOrder(): BelongsTo
+    protected function casts(): array
     {
-        return $this->belongsTo(ServiceOrder::class);
+        return [
+            'completed' => 'boolean',
+        ];
     }
 
     public function activity(): BelongsTo
@@ -29,5 +33,10 @@ class ActivityLog extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function serviceOrderItem(): BelongsTo
+    {
+        return $this->belongsTo(ServiceOrderItem::class);
     }
 }
