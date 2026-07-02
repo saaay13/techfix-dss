@@ -10,6 +10,9 @@ class Payment extends Model
 {
     use HasFactory;
 
+    // HU-08: Modelo de pagos. Cada pago se asocia a una orden de servicio.
+    // La validación de monto vs saldo restante se hace en el controlador
+    // para dar mensajes precisos al usuario (422 con detalle).
     protected $fillable = [
         'monto',
         'metodo_pago',

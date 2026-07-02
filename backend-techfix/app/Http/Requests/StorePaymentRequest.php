@@ -7,6 +7,9 @@ use Illuminate\Validation\Rule;
 
 class StorePaymentRequest extends FormRequest
 {
+    // HU-08: Valida que el pago tenga una orden existente, un monto positivo
+    // y un método de pago dentro de los permitidos (Efectivo, Transferencia,
+    // Tarjeta, QR). La validación de saldo restante se hace en el controlador.
     public function authorize(): bool
     {
         return true;

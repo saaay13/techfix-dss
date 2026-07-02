@@ -10,6 +10,8 @@ use Illuminate\Database\QueryException;
 
 class PaymentController extends Controller
 {
+    // HU-08: Devuelve todos los pagos con el cliente de la orden asociada,
+    // ordenados del más reciente al más antiguo.
     public function index()
     {
         $payments = Payment::with('serviceOrder.client')
@@ -18,6 +20,9 @@ class PaymentController extends Controller
         return response()->json($payments);
     }
 
+    // HU-08: Registra un pago verificando que el monto no exceda el saldo
+    // restante de la orden. Calcula totalPagado y saldoRestante para que
+    // el frontend pueda mostrar la información actualizada inmediatamente.
     public function store(StorePaymentRequest $request)
     {
         try {
@@ -58,12 +63,14 @@ class PaymentController extends Controller
         }
     }
 
+    // HU-08: Muestra un pago individual con el cliente de la orden
     public function show(Payment $payment)
     {
         $payment->load('serviceOrder.client');
         return response()->json($payment);
     }
 
+    // HU-08: Devuelve todos los pagos de una orden específica con totales
     public function byOrder(ServiceOrder $serviceOrder)
     {
         $payments = $serviceOrder->payments()->orderBy('created_at', 'desc')->get();
