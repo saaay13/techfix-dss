@@ -12,6 +12,7 @@ use App\Http\Controllers\ServiceOrderController;
 use App\Http\Controllers\ServiceTypeController;
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\DashboardController;
 
 Route::get('/ping', function () {
     return response()->json([
@@ -28,8 +29,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
 
+    Route::get('/dashboard', [DashboardController::class, 'index']);
+
     Route::apiResource('clients', ClientController::class);
     Route::apiResource('devices', DeviceController::class);
+    Route::get('devices/{device}/service-history', [DeviceController::class, 'serviceHistory']);
     Route::apiResource('service-types', ServiceTypeController::class)->only(['index', 'show']);
     Route::apiResource('service-orders', ServiceOrderController::class);
     Route::put('service-orders/{service_order}/status', [ServiceOrderController::class, 'updateStatus']);

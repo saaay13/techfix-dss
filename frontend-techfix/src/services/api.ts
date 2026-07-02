@@ -52,3 +52,6 @@ export const createClient = (data: {
 
 export const getCriticalStock = () =>
   api.get('/components/critical-stock').then(r => r.data)
+
+export const getDashboard = (): Promise<unknown> =>
+  api.get('/dashboard').then(r => r.data)

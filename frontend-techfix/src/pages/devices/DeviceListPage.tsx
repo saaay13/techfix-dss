@@ -1,4 +1,5 @@
 import { FormEvent, useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { getDevices, getDevice, createDevice, updateDevice, deleteDevice, getDeviceTypes, getPhysicalStates } from '../../services/devices'
 import { getClients } from '../../services/clients'
 import Modal from '../../components/Modal'
@@ -24,6 +25,7 @@ interface Client {
 const emptyForm = { tipo_equipo: '', marca: '', modelo: '', numero_serie: '', estado_fisico: '', client_id: 0 }
 
 export default function DeviceListPage() {
+  const navigate = useNavigate()
   const [devices, setDevices] = useState<Device[] | null>(null)
   const [clients, setClients] = useState<Client[]>([])
   const [error, setError] = useState('')
@@ -171,11 +173,20 @@ export default function DeviceListPage() {
                       {device.activo ? (device.estado_fisico || 'Activo') : 'Inactivo'}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-right space-x-2">
-                    <button onClick={() => openEdit(device.id)} className="px-3 py-1 bg-primary/10 text-primary-600 rounded-lg text-xs font-medium hover:bg-primary/20 transition-colors">Editar</button>
-                    {device.activo && (
-                      <button onClick={() => handleDelete(device.id, `${device.marca} ${device.modelo}`)} className="px-3 py-1 bg-error/10 text-error rounded-lg text-xs font-medium hover:bg-error/20 transition-colors">Desactivar</button>
-                    )}
+                  <td className="px-4 py-3 text-right">
+                    <span className="inline-flex items-center gap-1 whitespace-nowrap">
+                      <button onClick={() => navigate(`/equipos/${device.id}/historial`)} className="p-1.5 hover:bg-purple-100 rounded-lg transition-colors group" title="Ver historial de servicios">
+                        <svg className="w-4 h-4 text-purple-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 14l2 2 4-4"/></svg>
+                      </button>
+                      <button onClick={() => openEdit(device.id)} className="p-1.5 hover:bg-primary/10 rounded-lg transition-colors group" title="Editar">
+                        <svg className="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                      </button>
+                      {device.activo && (
+                        <button onClick={() => handleDelete(device.id, `${device.marca} ${device.modelo}`)} className="p-1.5 hover:bg-error/10 rounded-lg transition-colors group" title="Desactivar">
+                          <svg className="w-4 h-4 text-error" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                        </button>
+                      )}
+                    </span>
                   </td>
                 </tr>
               ))}
