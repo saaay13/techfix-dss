@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Builder;
 
 class ServiceOrder extends Model
 {
@@ -61,5 +62,25 @@ class ServiceOrder extends Model
     public function payments(): HasMany
     {
         return $this->hasMany(Payment::class);
+    }
+
+    public function scopeSearch($query, $search)
+    {
+        return $query->where(function ($q) use ($search) {
+            $q->where('diagnostico_inicial', 'like', "%{$search}%")
+              ->orWhere('observaciones', 'like', "%{$search}%")
+              ->orWhere('estado', 'like', "%{$search}%")
+              ->orWhere('prioridad', 'like', "%{$search}%");
+        });
+    }
+
+    public function scopeByEstado(Builder $query, $estado): Builder
+    {
+        return $query->where('estado', $estado);
+    }
+
+    public function scopeByPrioridad(Builder $query, $prioridad): Builder
+    {
+        return $query->where('prioridad', $prioridad);
     }
 }

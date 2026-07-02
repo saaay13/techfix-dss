@@ -38,4 +38,12 @@ class Component extends Model
         return $query->where('activo', true)
             ->whereColumn('cantidad', '<=', 'stock_minimo');
     }
+
+    public function scopeSearch($query, $search)
+    {
+        return $query->where(function ($q) use ($search) {
+            $q->where('nombre', 'like', "%{$search}%")
+              ->orWhere('descripcion', 'like', "%{$search}%");
+        });
+    }
 }

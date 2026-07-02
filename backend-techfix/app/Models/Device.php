@@ -37,4 +37,14 @@ class Device extends Model
     {
         return $this->hasMany(ServiceOrder::class);
     }
+
+    public function scopeSearch($query, $search)
+    {
+        return $query->where(function ($q) use ($search) {
+            $q->where('tipo_equipo', 'like', "%{$search}%")
+              ->orWhere('marca', 'like', "%{$search}%")
+              ->orWhere('modelo', 'like', "%{$search}%")
+              ->orWhere('numero_serie', 'like', "%{$search}%");
+        });
+    }
 }

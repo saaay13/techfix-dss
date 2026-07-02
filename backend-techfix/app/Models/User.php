@@ -43,4 +43,13 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Role::class);
     }
+
+    public function scopeSearch($query, $search)
+    {
+        return $query->where(function ($q) use ($search) {
+            $q->where('name', 'like', "%{$search}%")
+              ->orWhere('apellido', 'like', "%{$search}%")
+              ->orWhere('email', 'like', "%{$search}%");
+        });
+    }
 }
