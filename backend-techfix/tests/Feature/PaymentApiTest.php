@@ -15,6 +15,9 @@ class PaymentApiTest extends TestCase
 {
     use RefreshDatabase;
 
+    // HU-08: Pruebas de integración del módulo de pagos.
+    // Cubre: registro exitoso, validación de saldo, monto negativo,
+    // método inválido, restricción de rol, listado y resumen por orden.
     private ServiceOrder $order;
     private User $admin;
 
@@ -40,6 +43,7 @@ class PaymentApiTest extends TestCase
         ]);
     }
 
+    // Verifica que el pago se complete correctamente con datos válidos
     public function test_admin_can_register_payment(): void
     {
         $response = $this->actingAs($this->admin)->postJson('/api/payments', [
@@ -60,6 +64,7 @@ class PaymentApiTest extends TestCase
         ]);
     }
 
+    // Verifica que un pago mayor al saldo restante sea rechazado con 422
     public function test_payment_exceeding_balance_is_rejected(): void
     {
         $response = $this->actingAs($this->admin)->postJson('/api/payments', [
@@ -74,6 +79,7 @@ class PaymentApiTest extends TestCase
             ]);
     }
 
+    // Verifica que monto negativo sea rechazado por la validación del FormRequest
     public function test_negative_amount_is_rejected(): void
     {
         $response = $this->actingAs($this->admin)->postJson('/api/payments', [
@@ -86,6 +92,7 @@ class PaymentApiTest extends TestCase
             ->assertJsonValidationErrors(['monto']);
     }
 
+    // Verifica que métodos no permitidos sean rechazados
     public function test_invalid_payment_method_is_rejected(): void
     {
         $response = $this->actingAs($this->admin)->postJson('/api/payments', [
@@ -98,6 +105,7 @@ class PaymentApiTest extends TestCase
             ->assertJsonValidationErrors(['metodo_pago']);
     }
 
+    // Verifica que un técnico no pueda registrar pagos (solo administradores)
     public function test_non_admin_cannot_register_payment(): void
     {
         $user = User::factory()->create([
@@ -113,6 +121,7 @@ class PaymentApiTest extends TestCase
         $response->assertStatus(403);
     }
 
+    // Verifica que el endpoint GET /payments devuelva todos los pagos
     public function test_can_list_payments(): void
     {
         Payment::factory()->count(3)->create([
@@ -124,6 +133,7 @@ class PaymentApiTest extends TestCase
             ->assertJsonCount(3);
     }
 
+    // Verifica que el endpoint por orden devuelva totales correctos
     public function test_by_order_returns_balance_info(): void
     {
         Payment::factory()->create([

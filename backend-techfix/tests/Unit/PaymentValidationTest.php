@@ -6,6 +6,8 @@ use PHPUnit\Framework\TestCase;
 
 class PaymentValidationTest extends TestCase
 {
+    // HU-08: Validación de reglas de negocio de pagos a nivel unidad.
+    // Verifica métodos de pago permitidos, monto positivo y campos requeridos.
     private array $validMethods = ['Efectivo', 'Transferencia', 'Tarjeta', 'QR'];
 
     public function test_valid_payment_methods(): void
