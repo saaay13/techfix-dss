@@ -10,6 +10,9 @@ use Illuminate\Database\QueryException;
 
 class ServiceOrderController extends Controller
 {
+    // HU-04: CRUD de órdenes de servicio. El store asigna estado "Recibido",
+    // fecha de ingreso como hoy, costo_total en 0 (se actualiza con pagos)
+    // y vincula al usuario autenticado como responsable.
     public function index()
     {
         $orders = ServiceOrder::with(['client', 'device', 'serviceType', 'user'])

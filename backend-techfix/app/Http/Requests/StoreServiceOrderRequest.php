@@ -7,6 +7,8 @@ use Illuminate\Validation\Rule;
 
 class StoreServiceOrderRequest extends FormRequest
 {
+    // HU-04: Valida que existan cliente, equipo y tipo de servicio en BD.
+    // La prioridad solo acepta Baja, Media o Alta. Fecha estimada futura.
     public function authorize(): bool
     {
         return true;

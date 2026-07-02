@@ -10,6 +10,9 @@ class ServiceOrder extends Model
 {
     use HasFactory;
 
+    // HU-04: Orden de servicio creada por el recepcionista cuando un cliente
+    // trae un equipo. El estado inicial es "Recibido" y puede progresar a
+    // otras etapas. La prioridad determina la urgencia (Baja/Media/Alta).
     protected $fillable = [
         'fecha_ingreso',
         'diagnostico_inicial',
